@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Мое приложение</string>
+    <string name="mainReg">Регистрация</string>
+    <string name="mainSurvey">Анкета</string>
+    <string name="mainLang">EN</string>
+    <string name="registrationFirstText">Введите имя и фамилию</string>
+    <string name="registrationFirstEditText">Имя, Фамилия</string>
+    <string name="registrationFirstButton">Дальше</string>
+    <string name="registrationSecondText">Введите ваш знак зодиака</string>
+    <string name="registrationSecondEditText">Знак зодиака</string>
+    <string name="registrationSecondButton">Отправить</string>
+    <string name="surveyText">Введите ваши имя, фимилию и любимый цвет</string>
+    <string name="surveyEditTextName">Имя</string>
+    <string name="surveyEditTextSurname">Фамилия</string>
+    <string name="surveyEditTextColor">Любимый цвет</string>
+    <string name="surveyButtonFinish">Отправить</string>
+</resources>

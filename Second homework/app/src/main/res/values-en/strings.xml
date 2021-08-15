@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="mainReg">Registration</string>
+    <string name="mainSurvey">Survey</string>
+    <string name="mainLang">РУ</string>
+    <string name="registrationFirstText">Add your Name and Surname</string>
+    <string name="registrationFirstEditText">Name, Surname</string>
+    <string name="registrationFirstButton">Next</string>
+    <string name="registrationSecondText">Add your Zodiac Sign</string>
+    <string name="registrationSecondEditText">Zodiac Sign</string>
+    <string name="registrationSecondButton">Finish</string>
+    <string name="surveyText">Add your Name, Surname and favourite color</string>
+    <string name="surveyEditTextName">Name</string>
+    <string name="surveyEditTextSurname">Surname</string>
+    <string name="surveyEditTextColor">Favourite color</string>
+    <string name="surveyButtonFinish">Finish</string>
+</resources>
