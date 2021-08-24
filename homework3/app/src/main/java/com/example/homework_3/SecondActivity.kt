@@ -18,7 +18,6 @@ class SecondActivity: AppCompatActivity() {
         setContentView(R.layout.activity_second)
 
         var myArray = intent.getIntArrayExtra(INPUT_CONST)
-        println("-------.......................................----------- ${myArray?.get(1)}")
 
         findViewById<Button>(R.id.buttonSecond).setOnClickListener {
             val res = "sum = ${arraySum(myArray!!)}, mean = ${arrayMean(myArray)}, division = ${arrayDivision(myArray)}"
@@ -33,11 +32,7 @@ class SecondActivity: AppCompatActivity() {
     class Contract : ActivityResultContract<IntArray, String>() {
         override fun createIntent(context: Context, input: IntArray) : Intent {
             val intent = Intent(context, SecondActivity::class.java)
-            println(" ---------------------------1- ${input[1]}")
             intent.putExtra(INPUT_CONST, input)
-            println(" ---------------------------2- ${input.size}")
-            var const = intent.getIntArrayExtra(INPUT_CONST)
-            println("----------------3--$const")
             return intent
         }
 
@@ -72,11 +67,7 @@ class SecondActivity: AppCompatActivity() {
         var array1sum = array1.sum().toDouble()
         var array2sum = array2.sum().toDouble()
         var a = array1sum/array2sum
-        println(a)
-        println("------------------------$array1sum")
-        println("------------------------$array2sum")
 
         return a
     }
-
 }
