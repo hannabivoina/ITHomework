@@ -5,19 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.contactbook.databinding.FragmentContactDeleteBinding
-import com.example.contactbook.databinding.FragmentContactDetailsBinding
+import com.example.contactbook.databinding.FragmentContactAddPhoneBinding
 
-class ContactDeleteFragment : Fragment() {
-
-    private lateinit var binding: FragmentContactDeleteBinding
+class ContactAddPhoneFragment : Fragment() {
+    private lateinit var binding: FragmentContactAddPhoneBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentContactDeleteBinding.inflate(inflater, container, false)
-        binding.layoutDelete
+        binding = FragmentContactAddPhoneBinding.inflate(inflater, container, false)
         return binding.root
     }
 }

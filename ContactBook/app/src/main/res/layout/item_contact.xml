@@ -5,46 +5,46 @@
     android:id="@+id/itemContact"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
-
-    <ImageView
-        android:id="@+id/itemContactPhoto"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        tools:layout_editor_absoluteX="46dp"
-        tools:layout_editor_absoluteY="57dp"
-        tools:srcCompat="@tools:sample/avatars"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+    android:layout_margin="5dp">
 
     <TextView
         android:id="@+id/itemContactName"
         android:layout_width="wrap_content"
-        android:layout_margin="5dp"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:textColor="@color/black"
-        tools:text="Name"
         android:textSize="25dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/itemContactPhoto"/>
+        tools:layout_editor_absoluteX="80dp"
+        tools:text="Name"
+        app:layout_constraintStart_toEndOf="@+id/imageContactPhoto"/>
 
     <TextView
         android:id="@+id/itemContactNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        tools:text="+375291910240"
         android:textSize="20dp"
         app:layout_constraintTop_toBottomOf="@+id/itemContactName"
-        app:layout_constraintStart_toEndOf="@+id/itemContactPhoto"/>
+        app:layout_constraintStart_toEndOf="@+id/imageContactPhoto"
+        tools:layout_editor_absoluteX="80dp"
+        tools:text="+375291910240" />
 
     <ImageView
         android:id="@+id/item_contact_send"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:srcCompat="@android:drawable/ic_dialog_email"
-        tools:layout_editor_absoluteX="262dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_margin="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="15dp"/>
+        app:srcCompat="@android:drawable/ic_dialog_email" />
+
+    <ImageView
+        android:id="@+id/imageContactPhoto"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/ic_my_new_user_photo" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
