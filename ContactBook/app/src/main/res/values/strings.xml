@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ContactBook</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="deleteText1">Do you really want to delete the contact?</string>
+    <string name="deleteText2">The contact will be removed and you will not be able to restore it</string>
+    <string name="addContactName">Add your name</string>
+    <string name="addContactInfo">Add your contact</string>
+</resources>
