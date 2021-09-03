@@ -7,7 +7,6 @@ fun Fragment.contract(): AppContract = requireActivity() as AppContract
 
 interface AppContract {
     fun contactInfo(contact: Contact)
-    fun contactDelete()
     fun addContact()
     fun contactListShow()
     fun contactInfoLayPhone()

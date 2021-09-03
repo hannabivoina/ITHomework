@@ -35,8 +35,7 @@ class ContactAddFragment : Fragment() {
                 val newContact = Contact(
                     id = viewModel.contacts.size,
                     name = binding.contactAddName.text.toString(),
-                    info = addInfo(),
-                    type = "num"
+                    info = addInfo()
                 )
 
                 val newList: MutableList<Contact> = mutableListOf(newContact)

@@ -36,14 +36,6 @@ class MainActivity : AppCompatActivity(), AppContract {
             .commit()
     }
 
-    override fun contactDelete() {
-        val fragment = ContactDeleteFragment()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.contactDetailsDeleteLay, fragment)
-            .addToBackStack(null)
-            .commit()
-    }
-
     override fun addContact() {
         val fragment = ContactAddFragment()
         supportFragmentManager.beginTransaction()
