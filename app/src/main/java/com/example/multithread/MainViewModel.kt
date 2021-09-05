@@ -5,11 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class MainViewModel: ViewModel() {
-    var click : Int = 0
-    var status : Int = 0
-    var myPosition : Int = -1
-    var myList : MutableList<Int> = mutableListOf(2)
+class MainViewModel : ViewModel() {
+    var click: Int = 0
+    var status: Int = 0
+    var myPosition: Int = -1
+    var myList: MutableList<Int> = mutableListOf(2)
+    var historyList: MutableList<String> = mutableListOf()
 
     private var _countLiveData = MutableLiveData<Int>()
     val countLiveData: LiveData<Int>
@@ -39,8 +40,8 @@ class MainViewModel: ViewModel() {
         }
         thread?.start()
     }
-    
-    fun stopThread(th: Thread?){
+
+    fun stopThread(th: Thread?) {
         var th = null
     }
 
@@ -60,21 +61,21 @@ class MainViewModel: ViewModel() {
         thread?.start()
     }
 
-    fun startCount(sec: Int = 1){
+    fun startCount(sec: Int = 1) {
         status = 0
-        if (status == 0 && click == 0){
+        if (status == 0 && click == 0) {
             countNum()
             myPosition = -1
         }
-        changeNum(myPosition,sec)
+        changeNum(myPosition, sec)
     }
 
-    fun pauseCount(){
+    fun pauseCount() {
         status = 1
         click = 1
     }
 
-    fun stopCount(){
+    fun stopCount() {
         status = 2
         click = 0
         myList = mutableListOf(2)
