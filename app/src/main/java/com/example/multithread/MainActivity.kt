@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel = viewModels<MainViewModel>()
 
-        override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -85,13 +85,16 @@ class MainActivity : AppCompatActivity() {
 
         buttonHistory.setOnClickListener {
             var arr = viewModel.value.historyLiveData.value
-            if (arr != null){
-            val intent = Intent(this, HistoryActivity::class.java)
-            intent.putStringArrayListExtra("key", arr)
-            startActivity(intent)
-            }
-            else{
-                Toast.makeText(this, "Сначала нужно хотя бы раз запустить счетчик", Toast.LENGTH_LONG).show()
+            if (arr != null) {
+                val intent = Intent(this, HistoryActivity::class.java)
+                intent.putStringArrayListExtra("key", arr)
+                startActivity(intent)
+            } else {
+                Toast.makeText(
+                    this,
+                    "Сначала нужно хотя бы раз запустить счетчик",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
 
