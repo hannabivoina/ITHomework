@@ -6,16 +6,27 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
-    var click: Int = 0
-    var status: Int = 0
-    var myPosition: Int = -1
-    var myList: MutableList<Int> = mutableListOf(2)
-    var historyList: MutableList<String> = mutableListOf()
+    private var click: Int = 0
+    private var status: Int = 0
+    private var myPosition: Int = 0
+    private var myList: MutableList<Int> = mutableListOf(2)
+    private var res: Int = 0
+    private var sum: Int = 0
+
+    var _historyLiveData = ArrayList<String>()
+    val historyLiveData = MutableLiveData<ArrayList<String>>()
 
     private var _countLiveData = MutableLiveData<Int>()
     val countLiveData: LiveData<Int>
         get() = _countLiveData
 
+    fun getRes(): Int {
+        return res
+    }
+
+    fun getSum(): Int {
+        return sum
+    }
 
     fun isPrime(num: Int): Boolean {
         for (i in 3..(Math.sqrt(num.toDouble()).toInt())) {
@@ -27,8 +38,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun countNum() {
-        var thread: Thread? = null
-        thread = Thread {
+        var thread = Thread {
             var i = 3
             while (status != 2) {
                 if (isPrime(i)) {
@@ -36,29 +46,23 @@ class MainViewModel : ViewModel() {
                 }
                 i = i + 2
             }
-            stopThread(thread)
         }
-        thread?.start()
-    }
-
-    fun stopThread(th: Thread?) {
-        var th = null
+        thread.start()
     }
 
     fun changeNum(position: Int, sec: Int = 1) {
-        var thread: Thread? = null
         val interval = (sec * 1000).toLong()
         var num = position
-        thread = Thread {
+        var thread = Thread {
             while (status == 0) {
                 num++
+                res = myList.get(num)
                 _countLiveData.postValue(myList.get(num))
                 Thread.sleep(interval)
             }
             myPosition = num
-            stopThread(thread)
         }
-        thread?.start()
+        thread.start()
     }
 
     fun startCount(sec: Int = 1) {
@@ -79,6 +83,17 @@ class MainViewModel : ViewModel() {
         status = 2
         click = 0
         myList = mutableListOf(2)
+        sum = sumCount(res)
+        var hist = "$res, сумма $sum"
+        _historyLiveData.add(hist)
+        historyLiveData.value = _historyLiveData
     }
 
+    fun sumCount(num: Int): Int {
+        var newSum = 0
+        for (i in num downTo 0) {
+            newSum = newSum + i
+        }
+        return newSum
+    }
 }

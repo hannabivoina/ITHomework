@@ -1,37 +1,45 @@
 package com.example.multithread
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.multithread.databinding.ActivityMainBinding
 import java.lang.Math.sqrt
 import kotlin.concurrent.thread
 
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var mViewModel: MainViewModel
+    private lateinit var binding: ActivityMainBinding
+    private val viewModel = viewModels<MainViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+        override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        mViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-
-        val buttonStart = findViewById<Button>(R.id.buttonStart)
-        val buttonStop = findViewById<Button>(R.id.buttonStop)
-        val buttonPause = findViewById<Button>(R.id.buttonPause)
-        val buttonHistory = findViewById<Button>(R.id.buttonHistory)
-        val interval = findViewById<EditText>(R.id.editInterval)
+        val buttonStart = binding.buttonStart
+        val buttonStop = binding.buttonStop
+        val buttonPause = binding.buttonPause
+        val buttonHistory = binding.buttonHistory
+        val interval = binding.editInterval
         val intervalString = myIntervals()
-        val countStatus = findViewById<TextView>(R.id.textCountStatus)
-        buttonPause.isEnabled = false
-        buttonStop.isEnabled = false
+        val countStatus = binding.textCountStatus
+//        buttonPause.isEnabled = false
+//        buttonStop.isEnabled = false
+
+        viewModel.value.countLiveData.observe(this) {
+            buttonStart.isEnabled = false
+            binding.textMain.setText(it.toString())
+        }
 
         buttonStart.setOnClickListener {
             if (intervalString.contains(interval.text.toString())) {
@@ -39,12 +47,10 @@ class MainActivity : AppCompatActivity() {
                 buttonStart.isEnabled = false
                 buttonPause.isEnabled = true
                 buttonStop.isEnabled = true
-                println("---------------${mViewModel.countLiveData.value}")
+                println("---------------${viewModel.value.countLiveData.value}")
 
-                mViewModel.startCount(interval.text.toString().toInt())
-                mViewModel.countLiveData.observe(this) {
-                    findViewById<TextView>(R.id.textMain).setText(it.toString())
-                }
+                viewModel.value.startCount(interval.text.toString().toInt())
+
             } else {
                 Toast.makeText(this, "Введите число от 1 до 30", Toast.LENGTH_LONG).show()
             }
@@ -55,37 +61,40 @@ class MainActivity : AppCompatActivity() {
             buttonPause.isEnabled = true
             countStatus.setText("Счетчик остановлен")
 
-            mViewModel.stopCount()
+            viewModel.value.stopCount()
 
-            var mainText = findViewById<TextView>(R.id.textMain)
+            var mainText = binding.textMain
 
             val dialog = AlertDialog.Builder(this)
                 .setMessage(
-                    "Текущее значение - ${mainText.text}, сумма - ${
-                        sumCount(
-                            mainText.text.toString().toInt()
-                        )
-                    }"
+                    "Текущее значение - ${viewModel.value.getRes()}, сумма - ${viewModel.value.getSum()}"
                 )
                 .setNegativeButton("CANCEL") { dialog, which -> dialog.dismiss() }
                 .create()
             dialog.show()
 
-            mViewModel.historyList.add(
-                "${mainText.text}, сумма - ${
-                    sumCount(
-                        mainText.text.toString().toInt()
-                    )
-                }"
-            )
+            println("------------size-----${viewModel.value.historyLiveData.value?.size}")
         }
 
         buttonPause.setOnClickListener {
             buttonStart.isEnabled = true
             buttonPause.isEnabled = false
-            mViewModel.pauseCount()
+            viewModel.value.pauseCount()
             countStatus.setText("Счетчик приостановлен")
         }
+
+        buttonHistory.setOnClickListener {
+            var arr = viewModel.value.historyLiveData.value
+            if (arr != null){
+            val intent = Intent(this, HistoryActivity::class.java)
+            intent.putStringArrayListExtra("key", arr)
+            startActivity(intent)
+            }
+            else{
+                Toast.makeText(this, "Сначала нужно хотя бы раз запустить счетчик", Toast.LENGTH_LONG).show()
+            }
+        }
+
     }
 
     private fun myIntervals(): List<String> {
@@ -94,13 +103,5 @@ class MainActivity : AppCompatActivity() {
             list.add("$i")
         }
         return list.toList()
-    }
-
-    private fun sumCount(count: Int): Int {
-        var sum = 0
-        for (i in count downTo 1) {
-            sum += i
-        }
-        return sum
     }
 }
