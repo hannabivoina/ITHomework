@@ -26,31 +26,17 @@ private const val PARAM_ANNOTATION = "no_annotations"
 private const val PARAM_REQUEST = "add_request"
 private const val PARAM_LIMIT = "limit"
 private const val PARAM_API_KEY = "key"
-class WeatherRepository(private val okHttpClient: OkHttpClient) {
+class WeatherRepository(private val geoApi: GeoApi) {
 
     suspend fun findCityGeo(query: String): Result<List<com.example.weatherapp.model.Result>>{
         return withContext(Dispatchers.IO){
             runCatching {
-                HttpUrl.Builder()
-                    .scheme(HTTPS)
-                    .host(BASE_GEO_HOST)
-                    .addEncodedPathSegment(BASE_GEO_CODE)
-                    .addPathSegment(BASE_GEO_VERSION)
-                    .addPathSegment(BASE_GEO_TYPE)
-                    .addQueryParameter(PARAM_QUERY, query)
-                    .addQueryParameter(PARAM_ANNOTATION, "1")
-                    .addQueryParameter(PARAM_REQUEST, "1")
-                    .addQueryParameter(PARAM_LIMIT, "1")
-                    .addQueryParameter(PARAM_API_KEY, "67849701dd23440a85ccca03eb079a5b")
-                    .build()
-                    .let {
-                        Request.Builder().get().url(it).build()
-                    }
-                    .let {
-                        okHttpClient.newCall(it).execute()
-                    }.body?.let {
-                        Gson().fromJson(it.string(), CityGeo::class.java).results
-                    } ?: throw Exception("Empty Data")
+                geoApi.findCityGeoAsync(query = query)
+                    .await()
+                    ?.takeIf { it.isSuccessful }
+                    ?.body()
+                    ?.results
+                    ?: throw Exception("Empty Data")
             }
         }
     }

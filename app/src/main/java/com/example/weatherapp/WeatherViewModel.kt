@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class WeatherViewModel : ViewModel(){
 
-    private val weatherRepository = WeatherRepository(App.okHttpClient)
+    private val weatherRepository = WeatherRepository(App.searchGeo)
     private val _findCityLiveData = MutableLiveData<List<Result>>()
     val findCityLiveData : LiveData<List<Result>>
         get() = _findCityLiveData
