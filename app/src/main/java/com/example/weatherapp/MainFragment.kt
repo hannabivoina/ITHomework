@@ -28,9 +28,13 @@ class MainFragment: Fragment(R.layout.fragment_main) {
 
         viewModel.value.findCityLiveData.observe(viewLifecycleOwner){
 //            it.reduce { acc, any -> acc.toString() + any.toString() }.let {data->
-                var geometry = "${it[0].geometry.lat}, ${it[0].geometry.lng}"
+                if (it.isEmpty()){
+                    Toast.makeText(requireContext(),"такого города нет", Toast.LENGTH_LONG).show()
+                }
+            else {var geometry = "${it[0].geometry.lat}, ${it[0].geometry.lng}"
                 Toast.makeText(requireContext(), geometry, Toast.LENGTH_LONG).show()
             println("-------------------------------$it")
+            }
 //            }
             //toRecyclerView
         }
