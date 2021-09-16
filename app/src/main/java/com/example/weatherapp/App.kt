@@ -13,6 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class  App: Application() {
 
     lateinit var geoApi: GeoApi
+    lateinit var weatherApi: WeatherApi
 
     override fun onCreate() {
         super.onCreate()
@@ -32,16 +33,23 @@ class  App: Application() {
 //        }
 //
 //
-        private val retrofit = Retrofit
+        private val retrofitGeo = Retrofit
             .Builder()
             .baseUrl("https://api.opencagedata.com")
-//            .client(getHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
-        val searchGeo = retrofit.create(GeoApi::class.java)
-//        val okHttpClient = OkHttpClient()
+        val searchGeo = retrofitGeo.create(GeoApi::class.java)
+
+        private val retrofitWeather = Retrofit
+            .Builder()
+            .baseUrl("https://api.openweathermap.org/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .build()
+        val searchWeather = retrofitWeather.create(WeatherApi::class.java)
+
     }
 
 }

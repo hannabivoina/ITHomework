@@ -16,17 +16,7 @@ import java.util.Date.from
 
 //const val baseUrl = "https://api.opencagedata.com/geocode/v1/json?key=67849701dd23440a85ccca03eb079a5b&no_annotations=1&add_request=1&limit=1&q=minsk"
 
-private const val HTTPS = "https"
-private const val BASE_GEO_HOST = "api.opencagedata.com"
-private const val BASE_GEO_CODE = "geocode"
-private const val BASE_GEO_VERSION = "v1"
-private const val BASE_GEO_TYPE = "json"
-private const val PARAM_QUERY = "q"
-private const val PARAM_ANNOTATION = "no_annotations"
-private const val PARAM_REQUEST = "add_request"
-private const val PARAM_LIMIT = "limit"
-private const val PARAM_API_KEY = "key"
-class WeatherRepository(private val geoApi: GeoApi) {
+class WeatherRepository(private val geoApi: GeoApi, private val weatherApi: WeatherApi) {
 
     suspend fun findCityGeo(query: String): Result<List<com.example.weatherapp.model.Result>>{
         return withContext(Dispatchers.IO){
@@ -37,6 +27,19 @@ class WeatherRepository(private val geoApi: GeoApi) {
                     ?.body()
                     ?.results
                     ?: throw Exception("Empty Data")
+            }
+        }
+    }
+
+    suspend fun findCityWeather(lat: String, lon: String){
+        return withContext(Dispatchers.IO){
+            kotlin.runCatching {
+                weatherApi.findCityWeather(queryLat = lat, queryLon = lon)
+                    .await()
+                    ?.takeIf { it.isSuccessful }
+                    ?.body()
+                    ?.daily
+                    ?: throw Exception("Empty weather")
             }
         }
     }
