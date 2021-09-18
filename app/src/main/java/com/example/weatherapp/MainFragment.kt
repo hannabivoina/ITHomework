@@ -65,7 +65,7 @@ class MainFragment: Fragment(R.layout.fragment_main) {
         }
 
         binding.buttonAdd.setOnClickListener {
-            
+            AppContract.changeCity()
         }
 
         return binding.root
