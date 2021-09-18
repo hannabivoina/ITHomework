@@ -26,14 +26,26 @@ class MainFragment: Fragment(R.layout.fragment_main) {
         binding = FragmentMainBinding.inflate(inflater, container, false)
 
 
+        viewModel.value.findWeatherLiveData.observe(viewLifecycleOwner){
+            if (it.daily.isEmpty()){
+                Toast.makeText(requireContext(),"такой погоды нет", Toast.LENGTH_LONG).show()
+            }
+            else {
+                Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_LONG).show()
+
+            }
+        }
+
         viewModel.value.findCityLiveData.observe(viewLifecycleOwner){
+            println("-------------------------------$it")
 //            it.reduce { acc, any -> acc.toString() + any.toString() }.let {data->
-                if (it.isEmpty()){
+                if (it.results.isEmpty()){
                     Toast.makeText(requireContext(),"такого города нет", Toast.LENGTH_LONG).show()
                 }
-            else {var geometry = "${it[0].geometry.lat}, ${it[0].geometry.lng}"
+            else {var geometry = "${it.results[0].geometry.lat}, ${it.results[0].geometry.lng}"
                 Toast.makeText(requireContext(), geometry, Toast.LENGTH_LONG).show()
-            println("-------------------------------$it")
+
+
             }
 //            }
             //toRecyclerView
@@ -50,6 +62,10 @@ class MainFragment: Fragment(R.layout.fragment_main) {
                     viewModel.value.findCity(text)
                 }
             }
+        }
+
+        binding.buttonAdd.setOnClickListener {
+            
         }
 
         return binding.root
