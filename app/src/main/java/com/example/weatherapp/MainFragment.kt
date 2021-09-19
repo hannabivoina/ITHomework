@@ -32,7 +32,6 @@ class MainFragment: Fragment(R.layout.fragment_main) {
             }
             else {
                 Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_LONG).show()
-
             }
         }
 
