@@ -1,6 +1,6 @@
 package com.example.weatherapp
 
-import com.example.weatherapp.wheather.CityWheather
+import com.example.weatherapp.wheather.CityWeather
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.GET
@@ -20,5 +20,5 @@ interface WeatherApi {
         @Query(query_lon) queryLon: String,
         @Query(query_exclude) exclude : String = "hourly,minutely",
         @Query("appid") apiKey: String = API_KEY_WEATHER
-    ): Deferred<Response<CityWheather>>
+    ): Deferred<Response<CityWeather>>
 }

@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity(), AppContract {
     override fun changeCity() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.mainActivityLay, MainFragment())
+            .replace(R.id.mainActivityLay, ChooseCityFragment())
             .addToBackStack(null)
             .commit()
     }
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), AppContract {
     override fun weatherForecast() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.mainActivityLay, ChooseCityFragment())
+            .replace(R.id.mainActivityLay, MainFragment())
             .addToBackStack(null)
             .commit()
     }

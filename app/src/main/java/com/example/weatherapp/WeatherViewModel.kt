@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.model.CityGeo
 import com.example.weatherapp.model.Geometry
 import com.example.weatherapp.model.Result
-import com.example.weatherapp.wheather.CityWheather
+import com.example.weatherapp.wheather.CityWeather
 import com.example.weatherapp.wheather.Daily
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
@@ -26,8 +26,8 @@ class WeatherViewModel : ViewModel(){
     val errorCityLiveData : LiveData<String>
         get() = _errorCityLiveData
 
-    private val _findWeatherLiveData = MutableLiveData<CityWheather>()
-    val findWeatherLiveData: LiveData<CityWheather>
+    private val _findWeatherLiveData = MutableLiveData<CityWeather>()
+    val findWeatherLiveData: LiveData<CityWeather>
         get() = _findWeatherLiveData
     private val _errorWeatherLiveData = MutableLiveData<String>()
     val errorWeatherLiveData: LiveData<String>
@@ -53,22 +53,22 @@ class WeatherViewModel : ViewModel(){
     fun findCity(text: CharSequence){
         searchJob?.cancel()
         searchJob = viewModelScope.launch(exeptionHandlerGeo) {
-            delay(1000)
+//            delay(1000)
             val cityResponse = weatherRepository.findCityGeo(text.toString())
             if (cityResponse.isSuccess){
                 cityResponse.getOrNull()?.let {
                     _findCityLiveData.postValue(it)
-                    println("----------------${_findCityLiveData.value}")
+                    println("------1----------${_findCityLiveData.value}")
                 } ?: run{
                     cityResponse.exceptionOrNull()?.message ?: "UnExpected Expression"
             }
             }
         }
-        findCityLiveData.observeForever {
-            if (it.results.isNotEmpty()){
-                findWeather(it)
-            }
-        }
+//        findCityLiveData.observeForever {
+//            if (it.results.isNotEmpty()){
+//                findWeather(it)
+//            }
+//        }
     }
 
     fun findWeather(geo : CityGeo){
