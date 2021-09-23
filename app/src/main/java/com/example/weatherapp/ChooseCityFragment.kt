@@ -6,15 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.databinding.FragmentChooseCityBinding
+import kotlinx.android.synthetic.main.fragment_choose_city.*
 
 class ChooseCityFragment: Fragment(R.layout.fragment_choose_city) {
-    lateinit var binding: FragmentChooseCityBinding
+    private lateinit var binding: FragmentChooseCityBinding
     private val viewModel = viewModels<WeatherViewModel>()
+    private val adapter = CityAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,8 +28,6 @@ class ChooseCityFragment: Fragment(R.layout.fragment_choose_city) {
         binding = FragmentChooseCityBinding.inflate(inflater, container, false)
 
         viewModel.value.findCityLiveData.observe(viewLifecycleOwner){
-            println("---------------2----------------$it")
-//            it.reduce { acc, any -> acc.toString() + any.toString() }.let {data->
             if (it.results.isEmpty()){
                 Toast.makeText(requireContext(),"такого города нет", Toast.LENGTH_LONG).show()
             }
@@ -34,8 +36,6 @@ class ChooseCityFragment: Fragment(R.layout.fragment_choose_city) {
                 Toast.makeText(requireContext(), geometry, Toast.LENGTH_LONG).show()
                 viewModel.value.findWeather(it)
             }
-//            }
-            //toRecyclerView
         }
 
         viewModel.value.errorCityLiveData.observe(viewLifecycleOwner){
@@ -55,6 +55,7 @@ class ChooseCityFragment: Fragment(R.layout.fragment_choose_city) {
         }
 
         binding.buttonAddCity.setOnClickListener {
+//            adapter.addCity("hello")
             var addCity = EditText(requireContext())
             addCity.hint = "City name"
             var builder = AlertDialog
@@ -66,7 +67,28 @@ class ChooseCityFragment: Fragment(R.layout.fragment_choose_city) {
             builder.show()
         }
 
-        return binding.root
 
+        setupRecyclerView()
+//        val layoutManager = LinearLayoutManager(requireContext())
+//        binding.citiesListRecycler.layoutManager = layoutManager
+//        binding.citiesListRecycler.adapter = adapter
+
+        viewModel.value.citiesListLiveData.observe(viewLifecycleOwner){
+            adapter.addCity(it)
+        }
+
+        binding.buttonBack.setOnClickListener {
+            Toast.makeText(requireContext(), viewModel.value.findWeatherLiveData.value.toString(), Toast.LENGTH_LONG).show()
+//            contract().weatherForecast()
+        }
+
+        return binding.root
+    }
+
+    private fun setupRecyclerView() {
+        binding.apply {
+            citiesListRecycler.layoutManager = LinearLayoutManager(requireContext())
+            citiesListRecycler.adapter = adapter
+        }
     }
 }

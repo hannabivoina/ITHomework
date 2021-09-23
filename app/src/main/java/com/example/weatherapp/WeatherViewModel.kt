@@ -19,6 +19,12 @@ class WeatherViewModel : ViewModel(){
 
     private val weatherRepository = WeatherRepository(App.searchGeo, App.searchWeather)
 
+    private var citiesList = ArrayList<String>()
+
+    private val _citiesListLiveData =  MutableLiveData<String>()
+    val citiesListLiveData : LiveData<String>
+    get() = _citiesListLiveData
+
     private val _findCityLiveData = MutableLiveData<CityGeo>()
     val findCityLiveData : LiveData<CityGeo>
         get() = _findCityLiveData
@@ -57,6 +63,8 @@ class WeatherViewModel : ViewModel(){
             val cityResponse = weatherRepository.findCityGeo(text.toString())
             if (cityResponse.isSuccess){
                 cityResponse.getOrNull()?.let {
+                    citiesList.add(updateCitiesList(it))
+                   _citiesListLiveData.postValue(updateCitiesList(it))
                     _findCityLiveData.postValue(it)
                     println("------1----------${_findCityLiveData.value}")
                 } ?: run{
@@ -64,6 +72,8 @@ class WeatherViewModel : ViewModel(){
             }
             }
         }
+
+
 //        findCityLiveData.observeForever {
 //            if (it.results.isNotEmpty()){
 //                findWeather(it)
@@ -83,6 +93,13 @@ class WeatherViewModel : ViewModel(){
                 }
             }
         }
+    }
+
+    fun updateCitiesList(city: CityGeo): String{
+        val name = city.results[0].components.city
+        val code = city.results[0].components.countryCode
+        val cityInfo = name + "," + code
+        return cityInfo
     }
 
 }
