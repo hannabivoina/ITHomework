@@ -13,9 +13,9 @@ import com.example.weatherapp.wheather.Daily
 
 private const val imageUrl = "https://openweathermap.org/img/wn/"
 
-class WeatherAdapter(): RecyclerView.Adapter<WeatherAdapter.DailyWeatherViewHolder>(){
+class WeatherAdapter(weatherList: ArrayList<Daily>): RecyclerView.Adapter<WeatherAdapter.DailyWeatherViewHolder>(){
 
-    private var weatherDailyList = ArrayList<Daily>()
+    private var weatherDailyList = weatherList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DailyWeatherViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item, parent, false)

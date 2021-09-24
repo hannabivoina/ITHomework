@@ -55,7 +55,6 @@ class ChooseCityFragment: Fragment(R.layout.fragment_choose_city) {
         }
 
         binding.buttonAddCity.setOnClickListener {
-//            adapter.addCity("hello")
             var addCity = EditText(requireContext())
             addCity.hint = "City name"
             var builder = AlertDialog
@@ -92,3 +91,13 @@ class ChooseCityFragment: Fragment(R.layout.fragment_choose_city) {
         }
     }
 }
+/*
+Daily(dt=1632477600, temp=Temp(day=282.4), weather=[WeatherX(description=moderate rain, icon=10d, id=501, main=Rain)]),
+ Daily(dt=1632564000, temp=Temp(day=285.46), weather=[WeatherX(description=light rain, icon=10d, id=500, main=Rain)]),
+ Daily(dt=1632650400, temp=Temp(day=286.33), weather=[WeatherX(description=few clouds, icon=02d, id=801, main=Clouds)]),
+  Daily(dt=1632736800, temp=Temp(day=284.62), weather=[WeatherX(description=clear sky, icon=01d, id=800, main=Clear)]),
+   Daily(dt=1632823200, temp=Temp(day=284.42), weather=[WeatherX(description=light rain, icon=10d, id=500, main=Rain)]),
+    Daily(dt=1632909600, temp=Temp(day=283.46), weather=[WeatherX(description=light rain, icon=10d, id=500, main=Rain)]),
+     Daily(dt=1632992400, temp=Temp(day=285.08), weather=[WeatherX(description=light rain, icon=10d, id=500, main=Rain)]),
+Daily(dt=1633078800, temp=Temp(day=283.45), weather=[WeatherX(description=moderate rain, icon=10d, id=501, main=Rain)])
+ */
