@@ -5,6 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import com.example.weatherapp.wheather.Daily
+import java.text.SimpleDateFormat
+import java.util.*
+
+private const val imageUrl = "https://openweathermap.org/img/wn/"
 
 class MainActivity : AppCompatActivity(), AppContract {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,15 +30,23 @@ class MainActivity : AppCompatActivity(), AppContract {
             .commit()
     }
 
-    override fun weatherForecast(weatherDaily: List<Daily>) {
-        val bundle: Bundle = bundleOf(Pair("weather", weatherDaily))
-        val fragment = MainFragment().apply {
-            arguments = bundle
-        }
+    override fun weatherForecast() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.mainActivityLay, fragment)
+            .replace(R.id.mainActivityLay, MainFragment())
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun dateFormat(intDate: Int): String {
+        val simpleDateFormat: SimpleDateFormat = SimpleDateFormat("dd.MM.yyyy")
+        val date = Date(intDate.toLong() * 1000)
+        val newDate = simpleDateFormat.format(date)
+        return newDate
+    }
+
+    override fun getImageUrl(icon: String): String{
+        val url = imageUrl + icon + "@2x.png"
+        return url
     }
 }

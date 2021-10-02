@@ -15,21 +15,25 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class WeatherViewModel : ViewModel(){
+class WeatherViewModel : ViewModel() {
 
     private val weatherRepository = WeatherRepository(App.searchGeo, App.searchWeather)
 
-    private var citiesList = ArrayList<String>()
+//    private var citiesList = ArrayList<String>()
 
-    private val _citiesListLiveData =  MutableLiveData<String>()
-    val citiesListLiveData : LiveData<String>
-    get() = _citiesListLiveData
+    private val _weatherForecastLiveData = MutableLiveData<WeatherForecast>()
+    val weatherForecastLiveData: LiveData<WeatherForecast>
+        get() = _weatherForecastLiveData
+
+    private val _citiesListLiveData = MutableLiveData<ArrayList<String>>()
+    val citiesListLiveData: LiveData<ArrayList<String>>
+        get() = _citiesListLiveData
 
     private val _findCityLiveData = MutableLiveData<CityGeo>()
-    val findCityLiveData : LiveData<CityGeo>
+    val findCityLiveData: LiveData<CityGeo>
         get() = _findCityLiveData
     private val _errorCityLiveData = MutableLiveData<String>()
-    val errorCityLiveData : LiveData<String>
+    val errorCityLiveData: LiveData<String>
         get() = _errorCityLiveData
 
     private val _findWeatherLiveData = MutableLiveData<CityWeather>()
@@ -56,50 +60,67 @@ class WeatherViewModel : ViewModel(){
         searchJob = null
     }
 
-    fun findCity(text: CharSequence){
+    fun findCity(text: CharSequence) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch(exeptionHandlerGeo) {
-//            delay(1000)
             val cityResponse = weatherRepository.findCityGeo(text.toString())
-            if (cityResponse.isSuccess){
+            if (cityResponse.isSuccess) {
                 cityResponse.getOrNull()?.let {
-                    citiesList.add(updateCitiesList(it))
-                   _citiesListLiveData.postValue(updateCitiesList(it))
+//                    citiesList.add(updateCitiesList(it))
+//                   _citiesListLiveData.postValue(updateCitiesList(it))
                     _findCityLiveData.postValue(it)
-                    println("------1----------${_findCityLiveData.value}")
-                } ?: run{
+                } ?: run {
                     cityResponse.exceptionOrNull()?.message ?: "UnExpected Expression"
-            }
+                }
             }
         }
-
-
-//        findCityLiveData.observeForever {
-//            if (it.results.isNotEmpty()){
-//                findWeather(it)
-//            }
-//        }
     }
 
-    fun findWeather(geo : CityGeo){
+    fun findWeather(geo: CityGeo) {
         searchWeatherJob?.cancel()
         searchWeatherJob = viewModelScope.launch(exeptionHandlerWeather) {
-            val weatherResponse = weatherRepository.findCityWeather(geo.results[0].geometry.lat.toString(), geo.results[0].geometry.lng.toString())
-            if (weatherResponse.isSuccess){
+            val weatherResponse = weatherRepository.findCityWeather(
+                geo.results[0].geometry.lat.toString(),
+                geo.results[0].geometry.lng.toString()
+            )
+            if (weatherResponse.isSuccess) {
                 weatherResponse.getOrNull()?.let {
                     _findWeatherLiveData.postValue(it)
-                }?: kotlin.run {
+                } ?: run {
                     weatherResponse.exceptionOrNull()?.message ?: "UnExpected Expression"
                 }
             }
         }
     }
 
-    fun updateCitiesList(city: CityGeo): String{
+    private fun createCityName(city: CityGeo): String {
         val name = city.results[0].components.city
         val code = city.results[0].components.countryCode
         val cityInfo = name + "," + code
         return cityInfo
     }
 
+    fun getForecast(city: CityGeo?, weather: CityWeather?) {
+        if (city != null && weather != null) {
+            val weatherForecast = WeatherForecast(
+                cityName = createCityName(city),
+                geoLat = city.results[0].geometry.lat,
+                geoLng = city.results[0].geometry.lng,
+                weather = weather
+            )
+            _weatherForecastLiveData.postValue(weatherForecast)
+            _citiesListLiveData.postValue(updateList(weatherForecast.cityName))
+        }
+    }
+
+    fun updateList(city: String): ArrayList<String> {
+        val newList = ArrayList<String>()
+        newList.add(city)
+        if (citiesListLiveData.value.isNullOrEmpty()) {
+            return newList
+        } else {
+            newList.addAll(citiesListLiveData.value!!)
+        }
+        return newList
+    }
 }

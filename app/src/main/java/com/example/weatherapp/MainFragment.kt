@@ -8,42 +8,24 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.weatherapp.databinding.FragmentMainBinding
-import com.example.weatherapp.wheather.Daily
-import com.example.weatherapp.wheather.Temp
-import com.example.weatherapp.wheather.WeatherX
+import com.example.weatherapp.wheather.*
+import kotlinx.android.synthetic.main.item.*
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class MainFragment : Fragment(R.layout.fragment_main) {
-    private val viewModel = viewModels<WeatherViewModel>()
+    private val viewModel: WeatherViewModel by activityViewModels()
     lateinit private var adapter: WeatherAdapter
-    lateinit var binding: FragmentMainBinding
+    lateinit private var binding: FragmentMainBinding
 
-    var list = listOf<Int>(1, 2, 3)
-
-    private val weatherListTest = ArrayList<Daily>()
-
-    private val day: Daily = Daily(
-        1632477600,
-        Temp(day = 282.4),
-        listOf(WeatherX(description = "moderate rain", icon = "10d", id = 501, main = "Rain"))
-    )
-    private val day2: Daily = Daily(
-        1632477600,
-        Temp(day = 282.4),
-        listOf(WeatherX(description = "moderate rain", icon = "10d", id = 501, main = "Rain"))
-    )
-    private val day3: Daily = Daily(
-        1632477600,
-        Temp(day = 282.4),
-        listOf(WeatherX(description = "moderate rain", icon = "10d", id = 501, main = "Rain"))
-    )
-
-//    companion object{
-//        fun create() = MainFragment
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,22 +33,14 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMainBinding.inflate(inflater, container, false)
-        weatherListTest.add(day)
-        weatherListTest.add(day2)
-        weatherListTest.add(day3)
-
-        adapter = WeatherAdapter(weatherListTest)
 
         binding.buttonAdd.setOnClickListener {
             contract().changeCity()
         }
 
-        viewModel.value.findWeatherLiveData.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), "it", Toast.LENGTH_LONG).show()
-        }
-
-        println("-------------------------")
-        println(viewModel.value.findWeatherLiveData.value?.daily.toString())
+        adapter = WeatherAdapter(dailyWeatherForecast(viewModel.weatherForecastLiveData.value?.weather?.daily))
+        currentWeatherForecast(viewModel.weatherForecastLiveData.value?.weather?.current)
+        cityWeatherForecast(viewModel.weatherForecastLiveData.value)
 
         setupRecyclerView()
         return binding.root
@@ -74,9 +48,48 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private fun setupRecyclerView() {
         binding.apply {
-            recyclerViewMain.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            recyclerViewMain.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             recyclerViewMain.adapter = adapter
 
         }
     }
+
+    private fun dailyWeatherForecast(dailyList: List<Daily>?): ArrayList<Daily> {
+        val weatherForecast = ArrayList<Daily>()
+        if (dailyList.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "empty", Toast.LENGTH_SHORT)
+        } else {
+            for (i in 1..4) {
+                weatherForecast.add(dailyList[i])
+            }
+        }
+        return weatherForecast
+    }
+
+    private fun currentWeatherForecast(currentWeather: Current?) {
+        if (currentWeather == null){
+        }
+        else{
+            binding.apply {
+                mainDate.text = contract().dateFormat(currentWeather.dt)
+                mainDegree.text = "${(currentWeather.temp.toInt() - 273).toInt()}°"
+                mainType.text = currentWeather.weather[0].main
+
+                Glide
+                    .with(requireContext())
+                    .load(contract().getImageUrl(currentWeather.weather[0].icon))
+                    .centerCrop()
+                    .into(mainImage)
+            }
+        }
+    }
+
+    private fun cityWeatherForecast(weatherForecast: WeatherForecast?){
+        if (weatherForecast == null){}
+        else{
+            binding.mainCity.text = weatherForecast.cityName
+        }
+    }
+
 }

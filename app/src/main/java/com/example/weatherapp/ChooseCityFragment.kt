@@ -10,14 +10,15 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.databinding.FragmentChooseCityBinding
 import kotlinx.android.synthetic.main.fragment_choose_city.*
 
-class ChooseCityFragment: Fragment(R.layout.fragment_choose_city) {
+class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
     private lateinit var binding: FragmentChooseCityBinding
-    private val viewModel = viewModels<WeatherViewModel>()
+    private val viewModel: WeatherViewModel by activityViewModels()
     private val adapter = CityAdapter()
 
     override fun onCreateView(
@@ -27,31 +28,42 @@ class ChooseCityFragment: Fragment(R.layout.fragment_choose_city) {
     ): View? {
         binding = FragmentChooseCityBinding.inflate(inflater, container, false)
 
-        viewModel.value.findCityLiveData.observe(viewLifecycleOwner){
-            if (it.results.isEmpty()){
-                Toast.makeText(requireContext(),"такого города нет", Toast.LENGTH_LONG).show()
-            }
-            else {
-                var geometry = ".results${it.results[0].geometry.lat}, ${it.results[0].geometry.lng}"
-                Toast.makeText(requireContext(), geometry, Toast.LENGTH_LONG).show()
-                viewModel.value.findWeather(it)
+        viewModel.errorCityLiveData.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), "ошибка" + it, Toast.LENGTH_LONG).show()
+        }
+
+        viewModel.findCityLiveData.observe(viewLifecycleOwner) { city ->
+            println("-----------------1=3")
+            if (city.results.isEmpty()) {
+                Toast.makeText(requireContext(), "такого города нет", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(requireContext(), "ghbdtn", Toast.LENGTH_LONG).show()
+
+//                viewModel.findWeather(city)
             }
         }
 
-        viewModel.value.errorCityLiveData.observe(viewLifecycleOwner){
-            Toast.makeText(requireContext(), "ошибка"+it, Toast.LENGTH_LONG).show()
-            println("-------ошибка------------------------$it")
+        viewModel.findWeatherLiveData.observe(viewLifecycleOwner) { weather ->
+            println("-----------------2")
+
+            if (weather.daily.isEmpty()) {
+                Toast.makeText(requireContext(), "такой погоды нет", Toast.LENGTH_LONG).show()
+            } else {
+//                Toast.makeText(requireContext(), weather.toString(), Toast.LENGTH_LONG).show()
+
+                viewModel.getForecast(viewModel.findCityLiveData.value, weather)
+            }
         }
 
+        viewModel.weatherForecastLiveData.observe(viewLifecycleOwner) {
+            println("-----------------1")
+            adapter.addCity(it.cityName)
 
-        viewModel.value.findWeatherLiveData.observe(viewLifecycleOwner){
-            if (it.daily.isEmpty()){
-                Toast.makeText(requireContext(),"такой погоды нет", Toast.LENGTH_LONG).show()
-            }
-            else {
-                println("--------------3--------------${it.daily.toString()}")
-                Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_LONG).show()
-            }
+//            adapter.updateList(viewModel.updateList(it.cityName))
+        }
+
+        viewModel.citiesListLiveData.observe(viewLifecycleOwner){
+
         }
 
         binding.buttonAddCity.setOnClickListener {
@@ -61,25 +73,17 @@ class ChooseCityFragment: Fragment(R.layout.fragment_choose_city) {
                 .Builder(requireContext())
                 .setMessage("Please put the city name")
                 .setView(addCity)
-                .setPositiveButton("ok"){dialog, which -> viewModel.value.findCity(addCity.text)}
-                .setNegativeButton("cancel"){dialog, which -> dialog.cancel()}
+                .setPositiveButton("ok") { dialog, which -> viewModel.findCity(addCity.text) }
+                .setNegativeButton("cancel") { dialog, which -> dialog.cancel() }
             builder.show()
         }
 
-
         setupRecyclerView()
-//        val layoutManager = LinearLayoutManager(requireContext())
-//        binding.citiesListRecycler.layoutManager = layoutManager
-//        binding.citiesListRecycler.adapter = adapter
-
-        viewModel.value.citiesListLiveData.observe(viewLifecycleOwner){
-            adapter.addCity(it)
-        }
 
         binding.buttonBack.setOnClickListener {
-            Toast.makeText(requireContext(), viewModel.value.findWeatherLiveData.value.toString(), Toast.LENGTH_LONG).show()
-//            contract().weatherForecast()
+            contract().weatherForecast()
         }
+
 
         return binding.root
     }
@@ -91,13 +95,3 @@ class ChooseCityFragment: Fragment(R.layout.fragment_choose_city) {
         }
     }
 }
-/*
-Daily(dt=1632477600, temp=Temp(day=282.4), weather=[WeatherX(description=moderate rain, icon=10d, id=501, main=Rain)]),
- Daily(dt=1632564000, temp=Temp(day=285.46), weather=[WeatherX(description=light rain, icon=10d, id=500, main=Rain)]),
- Daily(dt=1632650400, temp=Temp(day=286.33), weather=[WeatherX(description=few clouds, icon=02d, id=801, main=Clouds)]),
-  Daily(dt=1632736800, temp=Temp(day=284.62), weather=[WeatherX(description=clear sky, icon=01d, id=800, main=Clear)]),
-   Daily(dt=1632823200, temp=Temp(day=284.42), weather=[WeatherX(description=light rain, icon=10d, id=500, main=Rain)]),
-    Daily(dt=1632909600, temp=Temp(day=283.46), weather=[WeatherX(description=light rain, icon=10d, id=500, main=Rain)]),
-     Daily(dt=1632992400, temp=Temp(day=285.08), weather=[WeatherX(description=light rain, icon=10d, id=500, main=Rain)]),
-Daily(dt=1633078800, temp=Temp(day=283.45), weather=[WeatherX(description=moderate rain, icon=10d, id=501, main=Rain)])
- */

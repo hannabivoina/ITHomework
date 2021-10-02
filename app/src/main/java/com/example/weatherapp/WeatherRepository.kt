@@ -16,8 +16,7 @@ import java.text.SimpleDateFormat
 
 class WeatherRepository(
     private val geoApi: GeoApi,
-    private val weatherApi: WeatherApi,
-    private val simpleDateFormat: SimpleDateFormat = SimpleDateFormat("yyyy.MM.dd")) {
+    private val weatherApi: WeatherApi) {
 
     suspend fun findCityGeo(query: String): Result<CityGeo>{
         return withContext(Dispatchers.IO){

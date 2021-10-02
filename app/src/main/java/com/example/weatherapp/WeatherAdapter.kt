@@ -10,6 +10,9 @@ import com.example.weatherapp.databinding.ItemBinding
 import com.example.weatherapp.databinding.ItemCityBinding
 import com.example.weatherapp.wheather.CityWeather
 import com.example.weatherapp.wheather.Daily
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 private const val imageUrl = "https://openweathermap.org/img/wn/"
 
@@ -37,9 +40,16 @@ class WeatherAdapter(weatherList: ArrayList<Daily>): RecyclerView.Adapter<Weathe
             return url
         }
 
+        private fun dateFormat(intDate: Int): String{
+            val simpleDateFormat: SimpleDateFormat = SimpleDateFormat("dd.MM.yyyy")
+            val date = Date(intDate.toLong() * 1000)
+            val newDate = simpleDateFormat.format(date)
+            return newDate
+        }
+
         fun bind(weatherDaily: Daily) = with(binding){
-            itemDate.text = weatherDaily.dt.toString()
-            itemDegree.text = weatherDaily.temp.day.toString()
+            itemDate.text = dateFormat(weatherDaily.dt)
+            itemDegree.text = "${(weatherDaily.temp.day - 273).toInt()}°"
             itemType.text = weatherDaily.weather[0].main
 
             Glide
