@@ -19,7 +19,21 @@ class WeatherViewModel : ViewModel() {
 
     private val weatherRepository = WeatherRepository(App.searchGeo, App.searchWeather)
 
-//    private var citiesList = ArrayList<String>()
+    private var citiesList = ArrayList<String>()
+    private var currentForecast: WeatherForecast? = null
+    private var forecastList = ArrayList<WeatherForecast>()
+
+    fun addToForecastList(forecast: WeatherForecast){
+        forecastList.add(forecast)
+    }
+
+    fun changeCurrentForecast(newForecast: WeatherForecast){
+        currentForecast = newForecast
+    }
+
+    fun getCurrentForecast() = currentForecast
+    fun getForecastList() = forecastList
+
 
     private val _weatherForecastLiveData = MutableLiveData<WeatherForecast>()
     val weatherForecastLiveData: LiveData<WeatherForecast>
@@ -108,8 +122,23 @@ class WeatherViewModel : ViewModel() {
                 geoLng = city.results[0].geometry.lng,
                 weather = weather
             )
-            _weatherForecastLiveData.postValue(weatherForecast)
-            _citiesListLiveData.postValue(updateList(weatherForecast.cityName))
+//            _weatherForecastLiveData.postValue(weatherForecast)
+//            _citiesListLiveData.postValue(updateList(weatherForecast.cityName))
+        }
+    }
+
+    fun getNewForecast(city: CityGeo?, weather: CityWeather?) {
+        if (city != null && weather != null) {
+            val weatherForecast = WeatherForecast(
+                cityName = createCityName(city),
+                geoLat = city.results[0].geometry.lat,
+                geoLng = city.results[0].geometry.lng,
+                weather = weather
+            )
+            changeCurrentForecast(weatherForecast)
+            addToForecastList(weatherForecast)
+//            _weatherForecastLiveData.postValue(weatherForecast)
+//            _citiesListLiveData.postValue(updateList(weatherForecast.cityName))
         }
     }
 

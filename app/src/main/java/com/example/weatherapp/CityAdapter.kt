@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.databinding.ItemCityBinding
 
 class CityAdapter() : RecyclerView.Adapter<CityAdapter.CityViewHolder>()/*, View.OnClickListener*/ {
-    private var cityList = ArrayList<String>()
+    private var cityList = ArrayList<WeatherForecast>()
 
     override fun getItemCount(): Int = cityList.size
 
@@ -21,7 +21,7 @@ class CityAdapter() : RecyclerView.Adapter<CityAdapter.CityViewHolder>()/*, View
     }
 
     override fun onBindViewHolder(holder: CityAdapter.CityViewHolder, position: Int) {
-        val city = cityList[position]
+        val city = cityList[position].cityName
 //        holder.itemView.tag = city
         holder.bind(city)
     }
@@ -39,12 +39,12 @@ class CityAdapter() : RecyclerView.Adapter<CityAdapter.CityViewHolder>()/*, View
         }
     }
 
-    fun addCity(city: String){
+    fun addCity(city: WeatherForecast){
         cityList.add(city)
         notifyDataSetChanged()
     }
 
-    fun updateList(newList:ArrayList<String>){
+    fun updateList(newList:ArrayList<WeatherForecast>){
         cityList = newList
         notifyDataSetChanged()
     }

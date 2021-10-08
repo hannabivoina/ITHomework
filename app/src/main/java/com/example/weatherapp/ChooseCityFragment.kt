@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_choose_city.*
 
 class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
     private lateinit var binding: FragmentChooseCityBinding
-    private val viewModel: WeatherViewModel by activityViewModels()
+    private val viewModel = viewModels<WeatherViewModel>()
     private val adapter = CityAdapter()
 
     override fun onCreateView(
@@ -28,41 +28,49 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
     ): View? {
         binding = FragmentChooseCityBinding.inflate(inflater, container, false)
 
-        viewModel.errorCityLiveData.observe(viewLifecycleOwner) {
+        setupRecyclerView()
+
+        println("------------")
+        println(viewModel.value.getForecastList().size)
+
+        viewModel.value.errorCityLiveData.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), "ошибка" + it, Toast.LENGTH_LONG).show()
         }
 
-        viewModel.findCityLiveData.observe(viewLifecycleOwner) { city ->
+        viewModel.value.findCityLiveData.observe(viewLifecycleOwner) { city ->
             println("-----------------1=3")
             if (city.results.isEmpty()) {
                 Toast.makeText(requireContext(), "такого города нет", Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(requireContext(), "ghbdtn", Toast.LENGTH_LONG).show()
+//                Toast.makeText(requireContext(), "ghbdtn", Toast.LENGTH_LONG).show()
 
-//                viewModel.findWeather(city)
+                viewModel.value.findWeather(city)
             }
         }
 
-        viewModel.findWeatherLiveData.observe(viewLifecycleOwner) { weather ->
+        viewModel.value.findWeatherLiveData.observe(viewLifecycleOwner) { weather ->
             println("-----------------2")
 
             if (weather.daily.isEmpty()) {
                 Toast.makeText(requireContext(), "такой погоды нет", Toast.LENGTH_LONG).show()
             } else {
 //                Toast.makeText(requireContext(), weather.toString(), Toast.LENGTH_LONG).show()
+                viewModel.value.getNewForecast(viewModel.value.findCityLiveData.value, weather)
+                adapter.updateList(viewModel.value.getForecastList())
+                println(viewModel.value.getForecastList().size)
 
-                viewModel.getForecast(viewModel.findCityLiveData.value, weather)
             }
         }
 
-        viewModel.weatherForecastLiveData.observe(viewLifecycleOwner) {
-            println("-----------------1")
-            adapter.addCity(it.cityName)
-
+//        viewModel.value.weatherForecastLiveData.observe(viewLifecycleOwner) {
+//            println("-----------------1")
+//
+//            adapter.addCity(it.cityName)
+//
 //            adapter.updateList(viewModel.updateList(it.cityName))
-        }
+//        }
 
-        viewModel.citiesListLiveData.observe(viewLifecycleOwner){
+        viewModel.value.citiesListLiveData.observe(viewLifecycleOwner){
 
         }
 
@@ -73,12 +81,12 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
                 .Builder(requireContext())
                 .setMessage("Please put the city name")
                 .setView(addCity)
-                .setPositiveButton("ok") { dialog, which -> viewModel.findCity(addCity.text) }
+                .setPositiveButton("ok") { dialog, which -> viewModel.value.findCity(addCity.text) }
                 .setNegativeButton("cancel") { dialog, which -> dialog.cancel() }
             builder.show()
         }
 
-        setupRecyclerView()
+
 
         binding.buttonBack.setOnClickListener {
             contract().weatherForecast()
