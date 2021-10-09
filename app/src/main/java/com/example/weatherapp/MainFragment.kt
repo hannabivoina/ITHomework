@@ -22,7 +22,7 @@ import kotlin.collections.ArrayList
 
 
 class MainFragment : Fragment(R.layout.fragment_main) {
-    private val viewModel: WeatherViewModel by activityViewModels()
+    private val viewModel = activityViewModels<WeatherViewModel>()
     lateinit private var adapter: WeatherAdapter
     lateinit private var binding: FragmentMainBinding
 
@@ -38,9 +38,11 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             contract().changeCity()
         }
 
-        adapter = WeatherAdapter(dailyWeatherForecast(viewModel.weatherForecastLiveData.value?.weather?.daily))
-        currentWeatherForecast(viewModel.weatherForecastLiveData.value?.weather?.current)
-        cityWeatherForecast(viewModel.weatherForecastLiveData.value)
+        val weatherForecast = viewModel.value.getCurrentForecast()
+
+        adapter = WeatherAdapter(dailyWeatherForecast(weatherForecast?.weather?.daily))
+        currentWeatherForecast(weatherForecast?.weather?.current)
+        cityWeatherForecast(weatherForecast)
 
         setupRecyclerView()
         return binding.root

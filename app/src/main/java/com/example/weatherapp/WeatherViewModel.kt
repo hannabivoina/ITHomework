@@ -19,7 +19,7 @@ class WeatherViewModel : ViewModel() {
 
     private val weatherRepository = WeatherRepository(App.searchGeo, App.searchWeather)
 
-    private var citiesList = ArrayList<String>()
+
     private var currentForecast: WeatherForecast? = null
     private var forecastList = ArrayList<WeatherForecast>()
 
@@ -27,34 +27,38 @@ class WeatherViewModel : ViewModel() {
         forecastList.add(forecast)
     }
 
-    fun changeCurrentForecast(newForecast: WeatherForecast){
-        currentForecast = newForecast
+    fun setNullLiveData(){
+        _errorCityLiveData.postValue(null)
+        _errorWeatherLiveData.postValue(null)
+        _findCityLiveData.postValue(null)
+        _findWeatherLiveData.postValue(null)
+        _weatherForecastLiveData.postValue(null)
     }
 
     fun getCurrentForecast() = currentForecast
     fun getForecastList() = forecastList
+    fun changeCurrentForecast(newForecast: WeatherForecast){
+        currentForecast = newForecast
+    }
 
 
-    private val _weatherForecastLiveData = MutableLiveData<WeatherForecast>()
-    val weatherForecastLiveData: LiveData<WeatherForecast>
+    private val _weatherForecastLiveData = MutableLiveData<WeatherForecast?>()
+    val weatherForecastLiveData: LiveData<WeatherForecast?>
         get() = _weatherForecastLiveData
 
-    private val _citiesListLiveData = MutableLiveData<ArrayList<String>>()
-    val citiesListLiveData: LiveData<ArrayList<String>>
-        get() = _citiesListLiveData
 
-    private val _findCityLiveData = MutableLiveData<CityGeo>()
-    val findCityLiveData: LiveData<CityGeo>
+    private val _findCityLiveData = MutableLiveData<CityGeo?>()
+    val findCityLiveData: LiveData<CityGeo?>
         get() = _findCityLiveData
-    private val _errorCityLiveData = MutableLiveData<String>()
-    val errorCityLiveData: LiveData<String>
+    private val _errorCityLiveData = MutableLiveData<String?>()
+    val errorCityLiveData: LiveData<String?>
         get() = _errorCityLiveData
 
-    private val _findWeatherLiveData = MutableLiveData<CityWeather>()
-    val findWeatherLiveData: LiveData<CityWeather>
+    private val _findWeatherLiveData = MutableLiveData<CityWeather?>()
+    val findWeatherLiveData: LiveData<CityWeather?>
         get() = _findWeatherLiveData
-    private val _errorWeatherLiveData = MutableLiveData<String>()
-    val errorWeatherLiveData: LiveData<String>
+    private val _errorWeatherLiveData = MutableLiveData<String?>()
+    val errorWeatherLiveData: LiveData<String?>
         get() = _errorWeatherLiveData
 
 
@@ -142,13 +146,13 @@ class WeatherViewModel : ViewModel() {
         }
     }
 
-    fun updateList(city: String): ArrayList<String> {
-        val newList = ArrayList<String>()
-        newList.add(city)
-        if (citiesListLiveData.value.isNullOrEmpty()) {
+    fun updateForecastList(forecast: WeatherForecast): ArrayList<WeatherForecast> {
+        val newList = ArrayList<WeatherForecast>()
+        newList.add(forecast)
+        if (forecastList.isNullOrEmpty()) {
             return newList
         } else {
-            newList.addAll(citiesListLiveData.value!!)
+            newList.addAll(forecastList)
         }
         return newList
     }
