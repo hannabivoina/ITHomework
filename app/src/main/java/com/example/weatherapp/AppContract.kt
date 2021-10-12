@@ -1,5 +1,6 @@
 package com.example.weatherapp
 
+import android.content.Context
 import androidx.fragment.app.Fragment
 import com.example.weatherapp.wheather.Daily
 
@@ -10,4 +11,5 @@ interface AppContract {
     fun weatherForecast()
     fun dateFormat(date: Int): String
     fun getImageUrl(icon: String): String
+    fun isNetworkAvailable(context: Context): Boolean
 }

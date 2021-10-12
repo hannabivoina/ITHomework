@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherapp.database.WeatherForecast
 import com.example.weatherapp.model.CityGeo
 import com.example.weatherapp.model.Geometry
 import com.example.weatherapp.model.Result
@@ -17,34 +18,30 @@ import kotlinx.coroutines.launch
 
 class WeatherViewModel : ViewModel() {
 
-    private val weatherRepository = WeatherRepository(App.searchGeo, App.searchWeather)
-
+    private val weatherRepository = WeatherRepository(App.searchGeo, App.searchWeather, App.getSavedForecastDao())
 
     private var currentForecast: WeatherForecast? = null
-    private var forecastList = ArrayList<WeatherForecast>()
-
-    fun addToForecastList(forecast: WeatherForecast){
-        forecastList.add(forecast)
-    }
+    private var forecastList = listOf<WeatherForecast>()
 
     fun setNullLiveData(){
         _errorCityLiveData.postValue(null)
         _errorWeatherLiveData.postValue(null)
         _findCityLiveData.postValue(null)
         _findWeatherLiveData.postValue(null)
-        _weatherForecastLiveData.postValue(null)
     }
 
     fun getCurrentForecast() = currentForecast
     fun getForecastList() = forecastList
-    fun changeCurrentForecast(newForecast: WeatherForecast){
-        currentForecast = newForecast
+    private fun addToForecastList(forecast: WeatherForecast){
+        forecastList = forecastList.toMutableList().let {
+            it.add(forecast)
+            it
+        }
     }
 
-
-    private val _weatherForecastLiveData = MutableLiveData<WeatherForecast?>()
-    val weatherForecastLiveData: LiveData<WeatherForecast?>
-        get() = _weatherForecastLiveData
+    private val _newForecastLiveData = MutableLiveData<List<WeatherForecast>>()
+    val newForecastLiveData: LiveData<List<WeatherForecast>>
+        get() = _newForecastLiveData
 
 
     private val _findCityLiveData = MutableLiveData<CityGeo?>()
@@ -60,6 +57,10 @@ class WeatherViewModel : ViewModel() {
     private val _errorWeatherLiveData = MutableLiveData<String?>()
     val errorWeatherLiveData: LiveData<String?>
         get() = _errorWeatherLiveData
+
+    private val _updateWeatherLiveData = MutableLiveData<CityWeather?>()
+    val updateWeatherLiveData: LiveData<CityWeather?>
+        get() = _updateWeatherLiveData
 
 
     private var searchJob: Job? = null
@@ -78,14 +79,12 @@ class WeatherViewModel : ViewModel() {
         searchJob = null
     }
 
-    fun findCity(text: CharSequence) {
+    fun findCity(text: String) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch(exeptionHandlerGeo) {
-            val cityResponse = weatherRepository.findCityGeo(text.toString())
+            val cityResponse = weatherRepository.findCityGeo(text)
             if (cityResponse.isSuccess) {
                 cityResponse.getOrNull()?.let {
-//                    citiesList.add(updateCitiesList(it))
-//                   _citiesListLiveData.postValue(updateCitiesList(it))
                     _findCityLiveData.postValue(it)
                 } ?: run {
                     cityResponse.exceptionOrNull()?.message ?: "UnExpected Expression"
@@ -94,13 +93,10 @@ class WeatherViewModel : ViewModel() {
         }
     }
 
-    fun findWeather(geo: CityGeo) {
+    fun findWeather(lat: String, lng: String) {
         searchWeatherJob?.cancel()
         searchWeatherJob = viewModelScope.launch(exeptionHandlerWeather) {
-            val weatherResponse = weatherRepository.findCityWeather(
-                geo.results[0].geometry.lat.toString(),
-                geo.results[0].geometry.lng.toString()
-            )
+            val weatherResponse = weatherRepository.findCityWeather(lat, lng)
             if (weatherResponse.isSuccess) {
                 weatherResponse.getOrNull()?.let {
                     _findWeatherLiveData.postValue(it)
@@ -118,42 +114,43 @@ class WeatherViewModel : ViewModel() {
         return cityInfo
     }
 
-    fun getForecast(city: CityGeo?, weather: CityWeather?) {
+    fun getForecast(city: CityGeo?, weather: CityWeather?){
         if (city != null && weather != null) {
-            val weatherForecast = WeatherForecast(
+            val newForecast = WeatherForecast(
+                id = if (forecastList.isEmpty()) 0 else forecastList.size,
+                currentStatus = false,
                 cityName = createCityName(city),
                 geoLat = city.results[0].geometry.lat,
                 geoLng = city.results[0].geometry.lng,
                 weather = weather
             )
-//            _weatherForecastLiveData.postValue(weatherForecast)
-//            _citiesListLiveData.postValue(updateList(weatherForecast.cityName))
+            addToSavedForecast(newForecast)
+            addToForecastList(newForecast)
         }
     }
 
-    fun getNewForecast(city: CityGeo?, weather: CityWeather?) {
-        if (city != null && weather != null) {
-            val weatherForecast = WeatherForecast(
-                cityName = createCityName(city),
-                geoLat = city.results[0].geometry.lat,
-                geoLng = city.results[0].geometry.lng,
-                weather = weather
-            )
-            changeCurrentForecast(weatherForecast)
-            addToForecastList(weatherForecast)
-//            _weatherForecastLiveData.postValue(weatherForecast)
-//            _citiesListLiveData.postValue(updateList(weatherForecast.cityName))
+    fun updateCurrentForecast(newCurrentWeatherId: Int){
+        for(i in forecastList){
+            i.currentStatus = i.id == newCurrentWeatherId
+        }
+        currentForecast = forecastList[newCurrentWeatherId]
+    }
+
+    fun getSavedForecast(){
+        viewModelScope.launch {
+            forecastList = weatherRepository.getAllSaved()
         }
     }
 
-    fun updateForecastList(forecast: WeatherForecast): ArrayList<WeatherForecast> {
-        val newList = ArrayList<WeatherForecast>()
-        newList.add(forecast)
-        if (forecastList.isNullOrEmpty()) {
-            return newList
-        } else {
-            newList.addAll(forecastList)
+    private fun addToSavedForecast(weatherForecast: WeatherForecast){
+        viewModelScope.launch {
+            weatherRepository.addWeatherToSavedForecast(weatherForecast)
         }
-        return newList
+    }
+
+    fun clearAll(){
+        viewModelScope.launch {
+            weatherRepository.clearAll()
+        }
     }
 }

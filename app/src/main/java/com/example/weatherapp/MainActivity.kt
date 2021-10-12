@@ -1,6 +1,9 @@
 package com.example.weatherapp
 
 import android.app.TaskStackBuilder.create
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.os.bundleOf
@@ -48,5 +51,12 @@ class MainActivity : AppCompatActivity(), AppContract {
     override fun getImageUrl(icon: String): String{
         val url = imageUrl + icon + "@2x.png"
         return url
+    }
+
+    override fun isNetworkAvailable(context: Context): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        var activeNetworkInfo: NetworkInfo? = null
+        activeNetworkInfo = cm.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting
     }
 }

@@ -1,14 +1,14 @@
 package com.example.weatherapp
 
 import android.app.Application
+import android.content.Context
+import androidx.room.Room
+import com.example.weatherapp.database.WeatherDatabase
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 //import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
-//import okhttp3.logging.HttpLoggingInterceptor
-//import retrofit2.Retrofit
 
 class  App: Application() {
 
@@ -17,22 +17,16 @@ class  App: Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        weatherDatabase = Room.databaseBuilder(this, WeatherDatabase::class.java, WEATHER_DATABASE).build()
     }
 
     companion object{
 
-//        private fun getHttpClient():OkHttpClient{
-//            val httpLoggingInterceptor = HttpLoggingInterceptor()
-//            httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-//
-//            val okHttpClient =OkHttpClient
-//                .Builder()
-//                .addInterceptor(httpLoggingInterceptor)
-//                .build()
-//        return okHttpClient
-//        }
-//
-//
+        private const val WEATHER_DATABASE = "WEATHER_DATABASE"
+
+        private lateinit var weatherDatabase: WeatherDatabase
+
         private val retrofitGeo = Retrofit
             .Builder()
             .baseUrl("https://api.opencagedata.com")
@@ -48,8 +42,10 @@ class  App: Application() {
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
+
         val searchWeather = retrofitWeather.create(WeatherApi::class.java)
 
+        fun getSavedForecastDao() = weatherDatabase.getSavedForecastDao()
     }
 
 }

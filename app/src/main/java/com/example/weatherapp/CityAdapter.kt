@@ -3,13 +3,15 @@ package com.example.weatherapp
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherapp.database.WeatherForecast
 import com.example.weatherapp.databinding.ItemCityBinding
 
-class CityAdapter() : RecyclerView.Adapter<CityAdapter.CityViewHolder>()/*, View.OnClickListener*/ {
+interface CityInterface{
+    fun changeCurrent(id: Int)
+}
+
+class CityAdapter(val cityInterface: CityInterface) : RecyclerView.Adapter<CityAdapter.CityViewHolder>()/*, View.OnClickListener*/ {
     private var cityList = ArrayList<WeatherForecast>()
 
     override fun getItemCount(): Int = cityList.size
@@ -21,32 +23,41 @@ class CityAdapter() : RecyclerView.Adapter<CityAdapter.CityViewHolder>()/*, View
     }
 
     override fun onBindViewHolder(holder: CityAdapter.CityViewHolder, position: Int) {
-        val city = cityList[position].cityName
+        val city = cityList[position]
 //        holder.itemView.tag = city
         holder.bind(city)
     }
 
-//    override fun onClick(view: View) {
-//        val city = view.tag
-//
-//     }
-
-    class CityViewHolder(item: View) : RecyclerView.ViewHolder(item) {
+    inner class CityViewHolder(item: View) : RecyclerView.ViewHolder(item) {
         val binding = ItemCityBinding.bind(item)
 
-        fun bind(cityCode: String) = with(binding) {
-            cityName.text = cityCode
+        fun bind(city: WeatherForecast) = with(binding) {
+            cityName.text = city.cityName
+            cityLay.setOnClickListener {
+                cityInterface.changeCurrent(city.id)
+                notifyDataSetChanged()
+            }
+            imageCheckCurrent.setImageResource(checkCurrent(city))
         }
     }
 
     fun addCity(city: WeatherForecast){
-        cityList.add(city)
+        cityList.toMutableList().add(city)
         notifyDataSetChanged()
     }
 
-    fun updateList(newList:ArrayList<WeatherForecast>){
-        cityList = newList
+    fun updateList(newList:List<WeatherForecast>){
+        cityList.clear()
+        cityList.addAll(newList)
         notifyDataSetChanged()
+    }
+
+    private fun checkCurrent(city: WeatherForecast): Int{
+        if(city.currentStatus){
+            return R.drawable.check_true
+        } else{
+            return R.drawable.check_false
+        }
     }
 
 }

@@ -1,23 +1,21 @@
 package com.example.weatherapp
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
-import android.service.autofill.Validators.or
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.widget.doOnTextChanged
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.weatherapp.database.WeatherForecast
 import com.example.weatherapp.databinding.FragmentMainBinding
 import com.example.weatherapp.wheather.*
-import kotlinx.android.synthetic.main.item.*
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -26,13 +24,17 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     lateinit private var adapter: WeatherAdapter
     lateinit private var binding: FragmentMainBinding
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMainBinding.inflate(inflater, container, false)
+        if(savedInstanceState == null){
+            viewModel.value.getSavedForecast()
+        }
+
+        println("-connection---${contract().isNetworkAvailable(requireContext())}")
 
         binding.buttonAdd.setOnClickListener {
             contract().changeCity()

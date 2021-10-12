@@ -15,11 +15,19 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.databinding.FragmentChooseCityBinding
 import kotlinx.android.synthetic.main.fragment_choose_city.*
+import kotlinx.android.synthetic.main.toolbar_choose_city.view.*
 
 class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
     private lateinit var binding: FragmentChooseCityBinding
     private val viewModel = activityViewModels<WeatherViewModel>()
-    private val adapter = CityAdapter()
+    private val adapter = CityAdapter(object : CityInterface {
+        override fun changeCurrent(id: Int) {
+            viewModel.value.updateCurrentForecast(id)
+            if (contract().isNetworkAvailable(requireContext())){
+
+            }
+        }
+    })
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,18 +36,7 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
     ): View? {
         binding = FragmentChooseCityBinding.inflate(inflater, container, false)
 
-        setupRecyclerView()
         adapter.updateList(viewModel.value.getForecastList())
-
-        println("------------")
-        println(viewModel.value.getForecastList().size)
-
-
-//        viewModel.value.newLiveData.observe(viewLifecycleOwner){
-//            if (it != null){
-//                Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_LONG).show()}
-//            viewModel.value.getNew(false)
-//        }
 
         viewModel.value.errorCityLiveData.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -48,40 +45,31 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
         }
 
         viewModel.value.findCityLiveData.observe(viewLifecycleOwner) { city ->
-            println("-----------------1=3")
             if (city != null) {
                 if (city.results.isEmpty()) {
                     Toast.makeText(requireContext(), "такого города нет", Toast.LENGTH_LONG).show()
                     viewModel.value.setNullLiveData()
                 } else {
-                    Toast.makeText(requireContext(), "ghbdtn", Toast.LENGTH_LONG).show()
-                    viewModel.value.findWeather(city)
+                    viewModel.value.findWeather(
+                        city.results[0].geometry.lat.toString(),
+                        city.results[0].geometry.lng.toString()
+                    )
                 }
             }
         }
 
         viewModel.value.findWeatherLiveData.observe(viewLifecycleOwner) { weather ->
-            println("-----------------2")
             if (weather != null) {
                 if (weather.daily.isEmpty()) {
                     Toast.makeText(requireContext(), "такой погоды нет", Toast.LENGTH_LONG).show()
                     viewModel.value.setNullLiveData()
                 } else {
-                    viewModel.value.getNewForecast(viewModel.value.findCityLiveData.value, weather)
+                    viewModel.value.getForecast(viewModel.value.findCityLiveData.value, weather)
                     adapter.updateList(viewModel.value.getForecastList())
-                    println(viewModel.value.getForecastList().size)
                     viewModel.value.setNullLiveData()
                 }
             }
         }
-
-//        viewModel.value.weatherForecastLiveData.observe(viewLifecycleOwner) {
-//            println("-----------------1")
-//
-//            adapter.addCity(it.cityName)
-//
-//            adapter.updateList(viewModel.updateList(it.cityName))
-//        }
 
         binding.buttonAddCity.setOnClickListener {
             var addCity = EditText(requireContext())
@@ -90,17 +78,17 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
                 .Builder(requireContext())
                 .setMessage("Please put the city name")
                 .setView(addCity)
-                .setPositiveButton("ok") { dialog, which -> viewModel.value.findCity(addCity.text) }
+                .setPositiveButton("ok") { dialog, which -> startSearch(addCity.text.toString()) }
                 .setNegativeButton("cancel") { dialog, which -> dialog.cancel() }
             builder.show()
         }
 
-
-
-        binding.buttonBack.setOnClickListener {
+        binding.toolbarChooseCity.toolbarButtonBack.setOnClickListener {
             contract().weatherForecast()
+//            viewModel.value.clearAll()
         }
 
+        setupRecyclerView()
 
         return binding.root
     }
@@ -109,6 +97,14 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
         binding.apply {
             citiesListRecycler.layoutManager = LinearLayoutManager(requireContext())
             citiesListRecycler.adapter = adapter
+        }
+    }
+
+    private fun startSearch(query: String) {
+        if (contract().isNetworkAvailable(requireContext())) {
+            viewModel.value.findCity(query)
+        } else {
+            Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_LONG).show()
         }
     }
 }
