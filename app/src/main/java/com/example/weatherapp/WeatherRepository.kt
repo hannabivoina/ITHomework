@@ -75,11 +75,12 @@ class WeatherRepository(
         }
     }
 
-    suspend fun updateWeatherForecast(newWeather: CityWeather, forecastId: Int): List<WeatherForecast>{
+    suspend fun updateWeatherForecast(forecastId: Int, newWeather: CityWeather): List<WeatherForecast>{
         withContext(Dispatchers.IO){
-            savedForecastDao.updateWeather(newWeather,forecastId)
+            savedForecastDao.updateWeather(forecastId, newWeather)
         }
         savedForecastList = getAllSaved()
+        println("----------------дошел")
         return savedForecastList?: emptyList()
     }
 }

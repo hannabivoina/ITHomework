@@ -23,8 +23,12 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
     private val adapter = CityAdapter(object : CityInterface {
         override fun changeCurrent(id: Int) {
             viewModel.value.updateCurrentForecast(id)
-            if (contract().isNetworkAvailable(requireContext())){
-
+            if (contract().isNetworkAvailable(requireContext())) {
+                viewModel.value.searchWeather(
+                    "update",
+                    viewModel.value.getCurrentForecast()!!.geoLat.toString(),
+                    viewModel.value.getCurrentForecast()!!.geoLng.toString()
+                )
             }
         }
     })
@@ -50,7 +54,8 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
                     Toast.makeText(requireContext(), "такого города нет", Toast.LENGTH_LONG).show()
                     viewModel.value.setNullLiveData()
                 } else {
-                    viewModel.value.findWeather(
+                    viewModel.value.searchWeather(
+                        "create",
                         city.results[0].geometry.lat.toString(),
                         city.results[0].geometry.lng.toString()
                     )
@@ -58,17 +63,35 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
             }
         }
 
-        viewModel.value.findWeatherLiveData.observe(viewLifecycleOwner) { weather ->
+        viewModel.value.createWeatherLiveData.observe(viewLifecycleOwner) { weather ->
             if (weather != null) {
-                if (weather.daily.isEmpty()) {
-                    Toast.makeText(requireContext(), "такой погоды нет", Toast.LENGTH_LONG).show()
-                    viewModel.value.setNullLiveData()
-                } else {
-                    viewModel.value.getForecast(viewModel.value.findCityLiveData.value, weather)
-                    adapter.updateList(viewModel.value.getForecastList())
-                    viewModel.value.setNullLiveData()
-                }
+            if (weather?.daily.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "погоды для такого города нет", Toast.LENGTH_LONG)
+                    .show()
+            } else {
+                viewModel.value.createForecast(viewModel.value.findCityLiveData.value, weather)
+                adapter.updateList(viewModel.value.getForecastList())
             }
+            viewModel.value.getForecastList()
+            viewModel.value.setNullLiveData()
+            }
+        }
+
+        viewModel.value.updateWeatherLiveData.observe(viewLifecycleOwner) { weather ->
+            if (weather != null) {
+                if (weather?.daily.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "новой погоды нет", Toast.LENGTH_LONG).show()
+                } else {
+                    viewModel.value.updateForecast(
+                        viewModel.value.getCurrentForecast()!!.id,
+                        weather
+                    )
+                }
+//                viewModel.value.updateCurrentForecast(id)
+                adapter.updateList(viewModel.value.getForecastList())
+                Toast.makeText(requireContext(), "Updated", Toast.LENGTH_LONG).show()
+            }
+            viewModel.value.setNullLiveData()
         }
 
         binding.buttonAddCity.setOnClickListener {
@@ -102,9 +125,11 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
 
     private fun startSearch(query: String) {
         if (contract().isNetworkAvailable(requireContext())) {
-            viewModel.value.findCity(query)
+            viewModel.value.searchCity(query)
         } else {
             Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_LONG).show()
         }
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.example.weatherapp
 
+import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -27,7 +28,8 @@ class WeatherViewModel : ViewModel() {
         _errorCityLiveData.postValue(null)
         _errorWeatherLiveData.postValue(null)
         _findCityLiveData.postValue(null)
-        _findWeatherLiveData.postValue(null)
+        _createWeatherLiveData.postValue(null)
+        _updateWeatherLiveData.postValue(null)
     }
 
     fun getCurrentForecast() = currentForecast
@@ -39,11 +41,6 @@ class WeatherViewModel : ViewModel() {
         }
     }
 
-    private val _newForecastLiveData = MutableLiveData<List<WeatherForecast>>()
-    val newForecastLiveData: LiveData<List<WeatherForecast>>
-        get() = _newForecastLiveData
-
-
     private val _findCityLiveData = MutableLiveData<CityGeo?>()
     val findCityLiveData: LiveData<CityGeo?>
         get() = _findCityLiveData
@@ -51,9 +48,9 @@ class WeatherViewModel : ViewModel() {
     val errorCityLiveData: LiveData<String?>
         get() = _errorCityLiveData
 
-    private val _findWeatherLiveData = MutableLiveData<CityWeather?>()
-    val findWeatherLiveData: LiveData<CityWeather?>
-        get() = _findWeatherLiveData
+    private val _createWeatherLiveData = MutableLiveData<CityWeather?>()
+    val createWeatherLiveData: LiveData<CityWeather?>
+        get() = _createWeatherLiveData
     private val _errorWeatherLiveData = MutableLiveData<String?>()
     val errorWeatherLiveData: LiveData<String?>
         get() = _errorWeatherLiveData
@@ -79,7 +76,7 @@ class WeatherViewModel : ViewModel() {
         searchJob = null
     }
 
-    fun findCity(text: String) {
+    fun searchCity(text: String) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch(exeptionHandlerGeo) {
             val cityResponse = weatherRepository.findCityGeo(text)
@@ -93,13 +90,17 @@ class WeatherViewModel : ViewModel() {
         }
     }
 
-    fun findWeather(lat: String, lng: String) {
+    fun searchWeather(status: String, lat: String, lng: String) {
         searchWeatherJob?.cancel()
         searchWeatherJob = viewModelScope.launch(exeptionHandlerWeather) {
             val weatherResponse = weatherRepository.findCityWeather(lat, lng)
             if (weatherResponse.isSuccess) {
                 weatherResponse.getOrNull()?.let {
-                    _findWeatherLiveData.postValue(it)
+                    when(status){
+                        "create" -> _createWeatherLiveData.postValue(it)
+                        "update" -> _updateWeatherLiveData.postValue(it)
+                    }
+
                 } ?: run {
                     weatherResponse.exceptionOrNull()?.message ?: "UnExpected Expression"
                 }
@@ -114,7 +115,7 @@ class WeatherViewModel : ViewModel() {
         return cityInfo
     }
 
-    fun getForecast(city: CityGeo?, weather: CityWeather?){
+    fun createForecast(city: CityGeo?, weather: CityWeather?){
         if (city != null && weather != null) {
             val newForecast = WeatherForecast(
                 id = if (forecastList.isEmpty()) 0 else forecastList.size,
@@ -151,6 +152,13 @@ class WeatherViewModel : ViewModel() {
     fun clearAll(){
         viewModelScope.launch {
             weatherRepository.clearAll()
+        }
+    }
+
+    fun updateForecast(id: Int, weather: CityWeather){
+        viewModelScope.launch {
+            forecastList = weatherRepository.updateWeatherForecast(id, weather)
+            println("-------------------------тут")
         }
     }
 }

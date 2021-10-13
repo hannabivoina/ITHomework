@@ -16,5 +16,5 @@ interface SavedForecastDao{
     fun clearAll()
 
     @Query("UPDATE SavedForecast SET weather = :newWeather WHERE id = :forecastId")
-    fun updateWeather(newWeather: CityWeather, forecastId: Int)
+    fun updateWeather(forecastId: Int, newWeather: CityWeather)
 }
