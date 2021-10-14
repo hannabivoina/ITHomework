@@ -1,4 +1,4 @@
-package com.example.weatherapp.model
+package com.example.weatherapp.viewModel.city
 
 data class Geometry(
     val lat: Double,

@@ -1,23 +1,19 @@
-package com.example.weatherapp
+package com.example.weatherapp.model
 
 
 import com.example.weatherapp.database.SavedForecastDao
 import com.example.weatherapp.database.WeatherForecast
-import com.example.weatherapp.model.CityGeo
-import com.example.weatherapp.model.Geometry
+import com.example.weatherapp.viewModel.city.CityGeo
 import com.example.weatherapp.wheather.CityWeather
-import com.example.weatherapp.wheather.Daily
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.Exception
-import java.text.SimpleDateFormat
 
 class WeatherRepository(
     private val geoApi: GeoApi,
     private val weatherApi: WeatherApi,
     private val savedForecastDao: SavedForecastDao
 ) {
-
     private var savedForecastList: List<WeatherForecast>? = null
 
     suspend fun findCityGeo(query: String): Result<CityGeo> {
@@ -63,10 +59,8 @@ class WeatherRepository(
         if (savedForecastList.isNullOrEmpty()) {
             withContext(Dispatchers.IO) {
                 savedForecastList = savedForecastDao.getAll()
-                println("----------------------saved")
             }
         }
-
         return savedForecastList ?: emptyList()
     }
 
@@ -82,9 +76,8 @@ class WeatherRepository(
     ): List<WeatherForecast> {
         withContext(Dispatchers.IO) {
             savedForecastDao.updateWeather(forecastId, newWeather)
-            savedForecastList = getAllSaved()
+            getAllSaved()
         }
-        println("----------------дошел")
         return savedForecastList ?: emptyList()
     }
 }

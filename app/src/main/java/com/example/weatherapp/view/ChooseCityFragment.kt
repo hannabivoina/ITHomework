@@ -1,4 +1,4 @@
-package com.example.weatherapp
+package com.example.weatherapp.view
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -6,31 +6,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weatherapp.CityAdapter
+import com.example.weatherapp.CityInterface
+import com.example.weatherapp.R
+import com.example.weatherapp.viewModel.WeatherViewModel
+import com.example.weatherapp.common.contract
 import com.example.weatherapp.databinding.FragmentChooseCityBinding
-import com.google.gson.Gson
-import kotlinx.android.synthetic.main.fragment_choose_city.*
-import kotlinx.android.synthetic.main.toolbar_choose_city.view.*
 
 class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
     private lateinit var binding: FragmentChooseCityBinding
     private val viewModel = activityViewModels<WeatherViewModel>()
     private val adapter = CityAdapter(object : CityInterface {
         override fun changeCurrent(id: Int) {
-            viewModel.value.updateCurrentForecast(id)
-            val gson = Gson()
-            println(gson.toJson(viewModel.value.getForecastList()[id]))
             if (contract().isNetworkAvailable(requireContext())) {
                 viewModel.value.searchWeather(
                     "update",
-                    viewModel.value.getCurrentForecast()!!.geoLat.toString(),
-                    viewModel.value.getCurrentForecast()!!.geoLng.toString()
+                    viewModel.value.getForecastList()[id].geoLat.toString(),
+                    viewModel.value.getForecastList()[id].geoLng.toString()
                 )
             }
             viewModel.value.updateCurrentForecast(id)
@@ -45,12 +41,6 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
         binding = FragmentChooseCityBinding.inflate(inflater, container, false)
 
         adapter.updateList(viewModel.value.getForecastList())
-
-        viewModel.value.errorCityLiveData.observe(viewLifecycleOwner) {
-            if (it != null) {
-                Toast.makeText(requireContext(), "ошибка" + it, Toast.LENGTH_LONG).show()
-            }
-        }
 
         viewModel.value.findCityLiveData.observe(viewLifecycleOwner) { city ->
             if (city != null) {
@@ -69,17 +59,17 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
 
         viewModel.value.createWeatherLiveData.observe(viewLifecycleOwner) { weather ->
             if (weather != null) {
-            if (weather?.daily.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), "погоды для такого города нет", Toast.LENGTH_LONG)
-                    .show()
+                if (weather?.daily.isNullOrEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "погоды для такого города нет",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    viewModel.value.createForecast(viewModel.value.findCityLiveData.value, weather)
+                    adapter.updateList(viewModel.value.getForecastList())
+                }
                 viewModel.value.setNullLiveData()
-            } else {
-                viewModel.value.createForecast(viewModel.value.findCityLiveData.value, weather)
-                adapter.updateList(viewModel.value.getForecastList())
-                viewModel.value.setNullLiveData()
-            }
-//            viewModel.value.getForecastList()
-
             }
         }
 
@@ -93,12 +83,20 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
                         weather
                     )
                 }
-//                viewModel.value.updateCurrentForecast(id)
                 adapter.updateList(viewModel.value.getForecastList())
-                Toast.makeText(requireContext(), "Updated", Toast.LENGTH_LONG).show()
                 viewModel.value.setNullLiveData()
             }
+        }
 
+        viewModel.value.errorCityLiveData.observe(viewLifecycleOwner) {
+            if (it != null) {
+                Toast.makeText(requireContext(), "ошибка" + it, Toast.LENGTH_LONG).show()
+            }
+        }
+        viewModel.value.errorWeatherLiveData.observe(viewLifecycleOwner) {
+            if (it != null) {
+                Toast.makeText(requireContext(), "ошибка" + it, Toast.LENGTH_LONG).show()
+            }
         }
 
         binding.buttonAddCity.setOnClickListener {

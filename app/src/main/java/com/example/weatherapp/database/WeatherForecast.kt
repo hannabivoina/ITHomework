@@ -13,7 +13,7 @@ data class WeatherForecast(
     @ColumnInfo(name = "cityName") val cityName: String,
     @ColumnInfo(name = "geoLat") val geoLat: Double,
     @ColumnInfo(name = "geoLng") val geoLng: Double,
-    @ColumnInfo(name = "weather") val weather: CityWeather
+    @ColumnInfo(name = "weather") var weather: CityWeather
 )
 
 class WeatherConverter{

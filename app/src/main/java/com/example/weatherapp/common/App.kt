@@ -1,12 +1,12 @@
-package com.example.weatherapp
+package com.example.weatherapp.common
 
 import android.app.Application
-import android.content.Context
 import androidx.room.Room
-import com.example.weatherapp.database.WeatherDatabase
+
+import com.example.weatherapp.model.GeoApi
+import com.example.weatherapp.model.WeatherApi
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 //import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

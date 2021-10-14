@@ -1,14 +1,11 @@
-package com.example.weatherapp
+package com.example.weatherapp.model
 
-import com.example.weatherapp.model.CityGeo
-import com.example.weatherapp.model.Result
-import io.reactivex.Single
+import com.example.weatherapp.viewModel.city.CityGeo
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
 
 private const val API_KEY_GEO = "67849701dd23440a85ccca03eb079a5b"
-//"https://api.opencagedata.com/
 interface GeoApi {
     @GET("geocode/v1/json")
     fun findCityGeoAsync(

@@ -1,20 +1,20 @@
-package com.example.weatherapp
+package com.example.weatherapp.view
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.weatherapp.R
+import com.example.weatherapp.common.contract
+import com.example.weatherapp.viewModel.WeatherViewModel
 import com.example.weatherapp.database.WeatherForecast
 import com.example.weatherapp.databinding.FragmentMainBinding
+import com.example.weatherapp.view.adapter.WeatherAdapter
 import com.example.weatherapp.wheather.*
 import kotlin.collections.ArrayList
 
@@ -33,8 +33,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         if(savedInstanceState == null){
             viewModel.value.getSavedForecast()
         }
-
-        println("-connection---${contract().isNetworkAvailable(requireContext())}")
 
         binding.buttonAdd.setOnClickListener {
             contract().changeCity()
@@ -95,5 +93,4 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             binding.mainCity.text = weatherForecast.cityName
         }
     }
-
 }

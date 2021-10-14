@@ -11,20 +11,18 @@ interface CityInterface{
     fun changeCurrent(id: Int)
 }
 
-class CityAdapter(val cityInterface: CityInterface) : RecyclerView.Adapter<CityAdapter.CityViewHolder>()/*, View.OnClickListener*/ {
+class CityAdapter(val cityInterface: CityInterface) : RecyclerView.Adapter<CityAdapter.CityViewHolder>(){
     private var cityList = ArrayList<WeatherForecast>()
 
     override fun getItemCount(): Int = cityList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityAdapter.CityViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_city, parent, false)
-//        view.setOnClickListener(this)
         return CityViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: CityAdapter.CityViewHolder, position: Int) {
         val city = cityList[position]
-//        holder.itemView.tag = city
         holder.bind(city)
     }
 

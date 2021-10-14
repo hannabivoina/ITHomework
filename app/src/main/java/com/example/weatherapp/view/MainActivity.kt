@@ -1,4 +1,4 @@
-package com.example.weatherapp
+package com.example.weatherapp.view
 
 import android.app.TaskStackBuilder.create
 import android.content.Context
@@ -7,6 +7,8 @@ import android.net.NetworkInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.os.bundleOf
+import com.example.weatherapp.R
+import com.example.weatherapp.common.AppContract
 import com.example.weatherapp.wheather.Daily
 import java.text.SimpleDateFormat
 import java.util.*

@@ -1,21 +1,16 @@
-package com.example.weatherapp
+package com.example.weatherapp.viewModel
 
-import android.widget.Toast
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherapp.common.App
 import com.example.weatherapp.database.WeatherForecast
-import com.example.weatherapp.model.CityGeo
-import com.example.weatherapp.model.Geometry
-import com.example.weatherapp.model.Result
+import com.example.weatherapp.viewModel.city.CityGeo
+import com.example.weatherapp.model.WeatherRepository
 import com.example.weatherapp.wheather.CityWeather
-import com.example.weatherapp.wheather.Daily
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class WeatherViewModel : ViewModel() {
@@ -60,14 +55,12 @@ class WeatherViewModel : ViewModel() {
     val updateWeatherLiveData: LiveData<CityWeather?>
         get() = _updateWeatherLiveData
 
-
     private var searchJob: Job? = null
     private var searchWeatherJob: Job? = null
 
     val exeptionHandlerGeo = CoroutineExceptionHandler { _, t ->
         _errorCityLiveData.postValue(t.toString())
     }
-
     val exeptionHandlerWeather = CoroutineExceptionHandler { _, t ->
         _errorWeatherLiveData.postValue(t.toString())
     }
@@ -101,7 +94,6 @@ class WeatherViewModel : ViewModel() {
                         "create" -> _createWeatherLiveData.postValue(it)
                         "update" -> _updateWeatherLiveData.postValue(it)
                     }
-
                 } ?: run {
                     weatherResponse.exceptionOrNull()?.message ?: "UnExpected Expression"
                 }
@@ -117,11 +109,7 @@ class WeatherViewModel : ViewModel() {
     }
 
     fun createForecast(city: CityGeo?, weather: CityWeather?){
-        println("++++++++++++++тутy")
-        println(city)
-        println(weather)
         if (city != null && weather != null) {
-            println("++++++++++++++тут")
             val newForecast = WeatherForecast(
                 id = if (forecastList.isEmpty()) 0 else forecastList.size,
                 currentStatus = false,
@@ -130,8 +118,11 @@ class WeatherViewModel : ViewModel() {
                 geoLng = city.results[0].geometry.lng,
                 weather = weather
             )
-            addToSavedForecast(newForecast)
-            addToForecastList(newForecast)
+            if (!checkExistence(newForecast)){
+                addToSavedForecast(newForecast)
+                addToForecastList(newForecast)
+                updateCurrentForecast(newForecast.id)
+            }
         }
     }
 
@@ -163,10 +154,16 @@ class WeatherViewModel : ViewModel() {
     fun updateForecast(id: Int, weather: CityWeather){
         viewModelScope.launch {
             forecastList = weatherRepository.updateWeatherForecast(id, weather)
-            println("-------------------------тут")
-            val gson = Gson()
-            println(gson.toJson(forecastList[id]))
+            forecastList[id].weather = weather
         }
-//        1634136590
+    }
+
+    private fun checkExistence(forecast: WeatherForecast): Boolean{
+        for (i in forecastList){
+            if (i.cityName == forecast.cityName){
+                return true
+            }
+        }
+        return false
     }
 }
