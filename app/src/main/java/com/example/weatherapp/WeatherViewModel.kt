@@ -12,6 +12,7 @@ import com.example.weatherapp.model.Geometry
 import com.example.weatherapp.model.Result
 import com.example.weatherapp.wheather.CityWeather
 import com.example.weatherapp.wheather.Daily
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -116,7 +117,11 @@ class WeatherViewModel : ViewModel() {
     }
 
     fun createForecast(city: CityGeo?, weather: CityWeather?){
+        println("++++++++++++++тутy")
+        println(city)
+        println(weather)
         if (city != null && weather != null) {
+            println("++++++++++++++тут")
             val newForecast = WeatherForecast(
                 id = if (forecastList.isEmpty()) 0 else forecastList.size,
                 currentStatus = false,
@@ -159,6 +164,9 @@ class WeatherViewModel : ViewModel() {
         viewModelScope.launch {
             forecastList = weatherRepository.updateWeatherForecast(id, weather)
             println("-------------------------тут")
+            val gson = Gson()
+            println(gson.toJson(forecastList[id]))
         }
+//        1634136590
     }
 }

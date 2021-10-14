@@ -14,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.databinding.FragmentChooseCityBinding
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_choose_city.*
 import kotlinx.android.synthetic.main.toolbar_choose_city.view.*
 
@@ -23,6 +24,8 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
     private val adapter = CityAdapter(object : CityInterface {
         override fun changeCurrent(id: Int) {
             viewModel.value.updateCurrentForecast(id)
+            val gson = Gson()
+            println(gson.toJson(viewModel.value.getForecastList()[id]))
             if (contract().isNetworkAvailable(requireContext())) {
                 viewModel.value.searchWeather(
                     "update",
@@ -30,6 +33,7 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
                     viewModel.value.getCurrentForecast()!!.geoLng.toString()
                 )
             }
+            viewModel.value.updateCurrentForecast(id)
         }
     })
 
@@ -68,12 +72,14 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
             if (weather?.daily.isNullOrEmpty()) {
                 Toast.makeText(requireContext(), "погоды для такого города нет", Toast.LENGTH_LONG)
                     .show()
+                viewModel.value.setNullLiveData()
             } else {
                 viewModel.value.createForecast(viewModel.value.findCityLiveData.value, weather)
                 adapter.updateList(viewModel.value.getForecastList())
+                viewModel.value.setNullLiveData()
             }
-            viewModel.value.getForecastList()
-            viewModel.value.setNullLiveData()
+//            viewModel.value.getForecastList()
+
             }
         }
 
@@ -90,8 +96,9 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
 //                viewModel.value.updateCurrentForecast(id)
                 adapter.updateList(viewModel.value.getForecastList())
                 Toast.makeText(requireContext(), "Updated", Toast.LENGTH_LONG).show()
+                viewModel.value.setNullLiveData()
             }
-            viewModel.value.setNullLiveData()
+
         }
 
         binding.buttonAddCity.setOnClickListener {
@@ -130,6 +137,4 @@ class ChooseCityFragment : Fragment(R.layout.fragment_choose_city) {
             Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_LONG).show()
         }
     }
-
-
 }

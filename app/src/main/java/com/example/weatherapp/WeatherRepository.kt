@@ -15,12 +15,13 @@ import java.text.SimpleDateFormat
 class WeatherRepository(
     private val geoApi: GeoApi,
     private val weatherApi: WeatherApi,
-    private val savedForecastDao: SavedForecastDao) {
+    private val savedForecastDao: SavedForecastDao
+) {
 
     private var savedForecastList: List<WeatherForecast>? = null
 
-    suspend fun findCityGeo(query: String): Result<CityGeo>{
-        return withContext(Dispatchers.IO){
+    suspend fun findCityGeo(query: String): Result<CityGeo> {
+        return withContext(Dispatchers.IO) {
             runCatching {
                 geoApi.findCityGeoAsync(query = query)
                     .await()
@@ -31,8 +32,8 @@ class WeatherRepository(
         }
     }
 
-    suspend fun findCityWeather(lat: String, lon: String):Result<CityWeather>{
-        return withContext(Dispatchers.IO){
+    suspend fun findCityWeather(lat: String, lon: String): Result<CityWeather> {
+        return withContext(Dispatchers.IO) {
             kotlin.runCatching {
                 weatherApi.findCityWeather(queryLat = lat, queryLon = lon)
                     .await()
@@ -43,44 +44,47 @@ class WeatherRepository(
         }
     }
 
-    suspend fun addWeatherToSavedForecast(weather: WeatherForecast):List<WeatherForecast>  =
+    suspend fun addWeatherToSavedForecast(weather: WeatherForecast): List<WeatherForecast> =
         withContext(Dispatchers.IO) {
             savedForecastDao.insert(weather)
             addToSavedForecastList(weather)
 
             return@withContext savedForecastList ?: emptyList()
-    }
+        }
 
-    private fun addToSavedForecastList(forecast: WeatherForecast){
+    private fun addToSavedForecastList(forecast: WeatherForecast) {
         savedForecastList = savedForecastList?.toMutableList()?.let {
             it.add(forecast)
             it
         } ?: arrayListOf(forecast)
     }
 
-    suspend fun getAllSaved(): List<WeatherForecast>{
-        if(savedForecastList.isNullOrEmpty()) {
+    suspend fun getAllSaved(): List<WeatherForecast> {
+        if (savedForecastList.isNullOrEmpty()) {
             withContext(Dispatchers.IO) {
                 savedForecastList = savedForecastDao.getAll()
                 println("----------------------saved")
             }
         }
 
-        return savedForecastList?: emptyList()
+        return savedForecastList ?: emptyList()
     }
 
-    suspend fun clearAll(){
-        withContext(Dispatchers.IO){
+    suspend fun clearAll() {
+        withContext(Dispatchers.IO) {
             savedForecastDao.clearAll()
         }
     }
 
-    suspend fun updateWeatherForecast(forecastId: Int, newWeather: CityWeather): List<WeatherForecast>{
-        withContext(Dispatchers.IO){
+    suspend fun updateWeatherForecast(
+        forecastId: Int,
+        newWeather: CityWeather
+    ): List<WeatherForecast> {
+        withContext(Dispatchers.IO) {
             savedForecastDao.updateWeather(forecastId, newWeather)
+            savedForecastList = getAllSaved()
         }
-        savedForecastList = getAllSaved()
         println("----------------дошел")
-        return savedForecastList?: emptyList()
+        return savedForecastList ?: emptyList()
     }
 }
