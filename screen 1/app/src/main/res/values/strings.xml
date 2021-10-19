@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="text_email">E-mail</string>
+    <string name="email_example">example@exmpl.com</string>
+    <string name="authorization_text">Put your authorization data to enter</string>
+    <string name="text_password">Password</string>
+    <string name="text_forgot_password">Forgot password</string>
+    <string name="text_sign_in">Sign In</string>
+</resources>
