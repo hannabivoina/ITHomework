@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <include layout="@layout/toolbar" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp">
+
+        <TableRow
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imagePalette"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@drawable/palette" />
+
+            <TextView
+                android:id="@+id/textArt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_art"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/black">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imageCake"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@drawable/cake" />
+
+            <TextView
+                android:id="@+id/textParty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_party"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/black">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imageEducation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@drawable/school" />
+
+            <TextView
+                android:id="@+id/textEducation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_education"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/black">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imageCycling"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@drawable/bike" />
+
+            <TextView
+                android:id="@+id/textCycling"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_cycling"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/black">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imageTravel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@drawable/airport" />
+
+            <TextView
+                android:id="@+id/textTravel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_travel"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/black">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imageMood"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@drawable/mood" />
+
+            <TextView
+                android:id="@+id/textMood"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_mood"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/black">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imageBreakfast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@drawable/breakfast" />
+
+            <TextView
+                android:id="@+id/textBreakfast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_breakfast"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/black">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imageGym"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@drawable/fitness" />
+
+            <TextView
+                android:id="@+id/texGym"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_gym"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/black">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imageKids"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@drawable/child" />
+
+            <TextView
+                android:id="@+id/textKids"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_kids"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/black">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imageJob"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@drawable/business" />
+
+            <TextView
+                android:id="@+id/textJob"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_job"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/black">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imageVacation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@drawable/beach" />
+
+            <TextView
+                android:id="@+id/textVacation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_vacation"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

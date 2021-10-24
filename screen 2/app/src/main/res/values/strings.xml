@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="text_topics">Topics</string>
+    <string name="text_art">Art</string>
+    <string name="text_party">Party</string>
+    <string name="text_education">Education</string>
+    <string name="text_cycling">Cycling</string>
+    <string name="text_travel">Travel</string>
+    <string name="text_mood">Mood</string>
+    <string name="text_breakfast">Breakfast</string>
+    <string name="text_gym">Gym</string>
+    <string name="text_kids">Kids</string>
+    <string name="text_job">Job</string>
+    <string name="text_vacation">Vacation</string>
+</resources>
