@@ -21,16 +21,16 @@
         android:id="@+id/personalInfoLay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="horizontal"
+        android:layout_weight="2"
         android:gravity="center"
-        android:layout_weight="2">
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:src="@drawable/mood"
-            android:background="@drawable/oval"/>
+            android:background="@drawable/oval"
+            android:src="@drawable/mood" />
 
         <LinearLayout
             android:id="@+id/postsLay"
@@ -133,25 +133,25 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:text="@string/text_address"
-        android:textSize="16dp"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="16dp" />
 
     <TextView
         android:id="@+id/textDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
-        android:textSize="16dp"
         android:text="@string/text_description"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="16dp" />
 
     <LinearLayout
         android:id="@+id/secondLay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="1.5"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:layout_weight="1.5">
+        android:orientation="horizontal">
 
         <include
             layout="@layout/rectangle"
@@ -191,14 +191,13 @@
 
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/optionsLay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="horizontal"
+        android:layout_weight="1.5"
         android:gravity="center"
-        android:layout_weight="1.5">
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/directionsLay"
@@ -219,13 +218,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_directions"
-                android:textSize="14dp"
+                android:textColor="@color/blue"
 
-                android:textColor="@color/blue" />
+                android:textSize="14dp" />
 
         </LinearLayout>
-
-
 
         <LinearLayout
             android:id="@+id/callLay"
@@ -246,8 +243,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_call"
-                android:textSize="14dp"
-                android:textColor="@color/blue" />
+                android:textColor="@color/blue"
+                android:textSize="14dp" />
 
         </LinearLayout>
 
@@ -270,9 +267,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_save"
-                android:textSize="14dp"
+                android:textColor="@color/blue"
 
-                android:textColor="@color/blue" />
+                android:textSize="14dp" />
 
         </LinearLayout>
 
@@ -293,10 +290,10 @@
             <TextView
                 android:id="@+id/textWebsite"
                 android:layout_width="wrap_content"
-                android:textSize="14dp"
                 android:layout_height="wrap_content"
                 android:text="@string/text_website"
-                android:textColor="@color/blue" />
+                android:textColor="@color/blue"
+                android:textSize="14dp" />
 
         </LinearLayout>
 
@@ -305,15 +302,15 @@
     <include
         layout="@layout/rectangle"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"/>
+        android:layout_height="0.5dp" />
 
     <LinearLayout
         android:id="@+id/thirdLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="2"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:layout_weight="2">
+        android:orientation="horizontal">
 
         <include
             layout="@layout/rectangle"
